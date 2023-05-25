@@ -1,0 +1,53 @@
+---
+name: Test - Golang
+
+# Run for all pushes to main and pull requests when Go or YAML files change
+on:
+  push:
+  pull_request:
+
+jobs:
+  gotest:
+    name: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ci-database:
+          [
+            "sqlite",
+            "cockroach-v22.1",
+            "cockroach-v22.2",
+            "cockroach-latest",
+            "postgres-14",
+            "postgres-15",
+            "postgres-latest",
+          ]
+        include:
+          - ci-database: "sqlite"
+            env-database-uri: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+          - ci-database: "cockroach-v22.1"
+            env-database-uri: "docker://cockroach:latest-v22.1"
+          - ci-database: "cockroach-v22.2"
+            env-database-uri: "docker://cockroach:latest-v22.2"
+          - ci-database: "cockroach-latest"
+            env-database-uri: "docker://cockroach:latest"
+          - ci-database: "postgres-14"
+            env-database-uri: "docker://postgres:14-alpine"
+          - ci-database: "postgres-15"
+            env-database-uri: "docker://postgres:15-alpine"
+          - ci-database: "postgres-latest"
+            env-database-uri: "docker://postgres:alpine"
+
+    steps:
+      - name: Checkout code for ${{ matrix.ci-database }}
+        uses: actions/checkout@v3
+      - name: Set up Go for ${{ matrix.ci-database }}
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: "go.mod"
+      - name: Install atlas for db migrations on ${{ matrix.ci-database }}
+        run: go install ariga.io/atlas/cmd/atlas@latest
+
+      - name: Run go tests for ${{ matrix.ci-database }}
+        run: IPAMAPI_TESTDB_URI="${{ matrix.env-database-uri }}" go test -race -coverprofile=coverage.txt -covermode=atomic -tags testtools ./...

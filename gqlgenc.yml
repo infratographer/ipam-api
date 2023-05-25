@@ -1,0 +1,22 @@
+model:
+  package: testclient
+  filename: ./internal/testclient/gen_models.go
+client:
+  package: testclient
+  filename: ./internal/testclient/gen_client.go # Where should any generated client go?
+models:
+  ID:
+    model:
+      - go.infratographer.com/x/gidx.PrefixedID
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  Date:
+    model: github.com/99designs/gqlgen/graphql.Time
+  JSON:
+    model:
+      - go.infratographer.com/x/entx.RawMessage
+schema: ["schema.graphql" ]
+query: ["internal/testclient/*.gql"]
+generate:
+  client: true
+  clientInterfaceName: "TestClient"

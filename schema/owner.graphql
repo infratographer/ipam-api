@@ -1,0 +1,41 @@
+extend type Owner @key(fields: "id") {
+  id: ID! @external
+  ip_block_type(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for IPBlockTypes returned from the connection.
+    """
+    orderBy: IPBlockTypeOrder
+
+    """
+    Filtering options for IPBlockTypes returned from the connection.
+    """
+    where: IPBlockTypeWhereInput
+  ): IPBlockTypeConnection! @goField(forceResolver: true)
+}
+
+extend type IPBlockType {
+  """
+  The owner of the ip block type.
+  """
+  owner: Owner! @goField(forceResolver: true)
+}
