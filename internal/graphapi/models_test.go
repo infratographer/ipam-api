@@ -79,3 +79,45 @@ func (i *IPBlockBuilder) MustNew(ctx context.Context) *ent.IPBlock {
 
 	return ipbCreate.SaveX(ctx)
 }
+
+type IPAddressBuilder struct {
+	IP          string
+	Reserved    bool
+	IPBlockID   gidx.PrefixedID
+	NodeID      gidx.PrefixedID
+	NodeOwnerID gidx.PrefixedID
+}
+
+func (i *IPAddressBuilder) MustNew(ctx context.Context) *ent.IPAddress {
+	ipaCreate := EntClient.IPAddress.Create()
+
+	if i.IP == "" {
+		i.IP = gofakeit.IPv4Address()
+	}
+
+	ipaCreate.SetIP(i.IP)
+
+	ipaCreate.SetReserved(i.Reserved)
+
+	if i.IPBlockID == "" {
+		ipbt := (&IPBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)
+		ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID}).MustNew(ctx)
+		i.IPBlockID = ipb.ID
+	}
+
+	ipaCreate.SetIPBlockID(i.IPBlockID)
+
+	if i.NodeID == "" {
+		i.NodeID = gidx.MustNewID(nodePrefix)
+	}
+
+	ipaCreate.SetNodeID(i.NodeID)
+
+	if i.NodeOwnerID == "" {
+		i.NodeOwnerID = gidx.MustNewID(ownerPrefix)
+	}
+
+	ipaCreate.SetNodeOwnerID(i.NodeOwnerID)
+
+	return ipaCreate.SaveX(ctx)
+}

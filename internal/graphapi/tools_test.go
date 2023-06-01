@@ -30,6 +30,7 @@ const (
 	ipBlockTypePrefix = "testipt"
 	locationPrefix    = "testloc"
 	ownerPrefix       = "testtnt"
+	nodePrefix        = "testnod"
 )
 
 var (

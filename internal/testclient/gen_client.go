@@ -12,6 +12,8 @@ import (
 )
 
 type TestClient interface {
+	CreateIPAddress(ctx context.Context, input CreateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*CreateIPAddress, error)
+	DeleteIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*DeleteIPAddress, error)
 	GetIPBlock(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlock, error)
 	GetIPBlockType(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlockType, error)
 	IPBlockCreate(ctx context.Context, input CreateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockCreate, error)
@@ -21,6 +23,8 @@ type TestClient interface {
 	IPBlockTypeUpdate(ctx context.Context, id gidx.PrefixedID, input UpdateIPBlockTypeInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockTypeUpdate, error)
 	IPBlockUpdate(ctx context.Context, id gidx.PrefixedID, input UpdateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockUpdate, error)
 	ListIPBlockTypes(ctx context.Context, id gidx.PrefixedID, orderBy *IPBlockTypeOrder, httpRequestOptions ...client.HTTPRequestOption) (*ListIPBlockTypes, error)
+	UpdateIPAddress(ctx context.Context, id gidx.PrefixedID, input UpdateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*UpdateIPAddress, error)
+	GetIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddress, error)
 }
 
 type Client struct {
@@ -48,6 +52,31 @@ type Mutation struct {
 	CreateIPBlockType IPBlockTypeCreatePayload "json:\"createIPBlockType\" graphql:\"createIPBlockType\""
 	UpdateIPBlockType IPBlockTypeUpdatePayload "json:\"updateIPBlockType\" graphql:\"updateIPBlockType\""
 	DeleteIPBlockType IPBlockTypeDeletePayload "json:\"deleteIPBlockType\" graphql:\"deleteIPBlockType\""
+}
+type CreateIPAddress struct {
+	CreateIPAddress struct {
+		IPAddress struct {
+			ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			IP       string          "json:\"ip\" graphql:\"ip\""
+			Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+			IPBlock  struct {
+				ID        gidx.PrefixedID "json:\"id\" graphql:\"id\""
+				IPAddress struct {
+					Edges []*struct {
+						Node *struct {
+							ID gidx.PrefixedID "json:\"id\" graphql:\"id\""
+							IP string          "json:\"ip\" graphql:\"ip\""
+						} "json:\"node\" graphql:\"node\""
+					} "json:\"edges\" graphql:\"edges\""
+				} "json:\"ipAddress\" graphql:\"ipAddress\""
+			} "json:\"ipBlock\" graphql:\"ipBlock\""
+		} "json:\"ip_address\" graphql:\"ip_address\""
+	} "json:\"createIPAddress\" graphql:\"createIPAddress\""
+}
+type DeleteIPAddress struct {
+	DeleteIPAddress struct {
+		DeletedID gidx.PrefixedID "json:\"deletedID\" graphql:\"deletedID\""
+	} "json:\"deleteIPAddress\" graphql:\"deleteIPAddress\""
 }
 type GetIPBlock struct {
 	IPBlock struct {
@@ -168,6 +197,94 @@ type ListIPBlockTypes struct {
 			} "json:\"edges\" graphql:\"edges\""
 		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
 	} "json:\"_entities\" graphql:\"_entities\""
+}
+type UpdateIPAddress struct {
+	UpdateIPAddress struct {
+		IPAddress struct {
+			ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			IP       string          "json:\"ip\" graphql:\"ip\""
+			Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+			IPBlock  struct {
+				ID        gidx.PrefixedID "json:\"id\" graphql:\"id\""
+				IPAddress struct {
+					Edges []*struct {
+						Node *struct {
+							ID gidx.PrefixedID "json:\"id\" graphql:\"id\""
+							IP string          "json:\"ip\" graphql:\"ip\""
+						} "json:\"node\" graphql:\"node\""
+					} "json:\"edges\" graphql:\"edges\""
+				} "json:\"ipAddress\" graphql:\"ipAddress\""
+			} "json:\"ipBlock\" graphql:\"ipBlock\""
+		} "json:\"ip_address\" graphql:\"ip_address\""
+	} "json:\"updateIPAddress\" graphql:\"updateIPAddress\""
+}
+type GetIPAddress struct {
+	IPAddress struct {
+		ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+		IP       string          "json:\"ip\" graphql:\"ip\""
+		Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+		IPBlock  struct {
+			ID                gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			Prefix            string          "json:\"prefix\" graphql:\"prefix\""
+			AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
+			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
+		} "json:\"ipBlock\" graphql:\"ipBlock\""
+	} "json:\"ip_address\" graphql:\"ip_address\""
+}
+
+const CreateIPAddressDocument = `mutation CreateIPAddress ($input: CreateIPAddressInput!) {
+	createIPAddress(input: $input) {
+		ip_address {
+			id
+			ip
+			reserved
+			ipBlock {
+				id
+				ipAddress {
+					edges {
+						node {
+							id
+							ip
+						}
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) CreateIPAddress(ctx context.Context, input CreateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*CreateIPAddress, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateIPAddress
+	if err := c.Client.Post(ctx, "CreateIPAddress", CreateIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteIPAddressDocument = `mutation DeleteIPAddress ($id: ID!) {
+	deleteIPAddress(id: $id) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*DeleteIPAddress, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res DeleteIPAddress
+	if err := c.Client.Post(ctx, "DeleteIPAddress", DeleteIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 const GetIPBlockDocument = `query GetIPBlock ($id: ID!) {
@@ -424,6 +541,70 @@ func (c *Client) ListIPBlockTypes(ctx context.Context, id gidx.PrefixedID, order
 
 	var res ListIPBlockTypes
 	if err := c.Client.Post(ctx, "ListIPBlockTypes", ListIPBlockTypesDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateIPAddressDocument = `mutation UpdateIPAddress ($id: ID!, $input: UpdateIPAddressInput!) {
+	updateIPAddress(id: $id, input: $input) {
+		ip_address {
+			id
+			ip
+			reserved
+			ipBlock {
+				id
+				ipAddress {
+					edges {
+						node {
+							id
+							ip
+						}
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) UpdateIPAddress(ctx context.Context, id gidx.PrefixedID, input UpdateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*UpdateIPAddress, error) {
+	vars := map[string]interface{}{
+		"id":    id,
+		"input": input,
+	}
+
+	var res UpdateIPAddress
+	if err := c.Client.Post(ctx, "UpdateIPAddress", UpdateIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetIPAddressDocument = `query getIPAddress ($id: ID!) {
+	ip_address(id: $id) {
+		id
+		ip
+		reserved
+		ipBlock {
+			id
+			prefix
+			allowAutoAllocate
+			allowAutoSubnet
+		}
+	}
+}
+`
+
+func (c *Client) GetIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddress, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res GetIPAddress
+	if err := c.Client.Post(ctx, "getIPAddress", GetIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 
