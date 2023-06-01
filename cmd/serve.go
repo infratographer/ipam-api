@@ -97,6 +97,12 @@ func serve(ctx context.Context) error {
 
 	client := ent.NewClient(cOpts...)
 
+	// Run the automatic migration tool to create all schema resources.
+	if err := client.Schema.Create(ctx); err != nil {
+		logger.Errorf("failed to create schema resources", "error", err)
+		return err
+	}
+
 	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
 	if err != nil {
 		logger.Error("failed to create server", zap.Error(err))
