@@ -9,12 +9,12 @@ import (
 	ent "go.infratographer.com/ipam-api/internal/ent/generated"
 )
 
-type IpBlockTypeBuilder struct {
+type IPBlockTypeBuilder struct {
 	Name    string
 	OwnerID gidx.PrefixedID
 }
 
-func (i *IpBlockTypeBuilder) MustNew(ctx context.Context) *ent.IPBlockType {
+func (i *IPBlockTypeBuilder) MustNew(ctx context.Context) *ent.IPBlockType {
 	ipbtCreate := EntClient.IPBlockType.Create()
 
 	if i.Name == "" {
@@ -32,7 +32,7 @@ func (i *IpBlockTypeBuilder) MustNew(ctx context.Context) *ent.IPBlockType {
 	return ipbtCreate.SaveX(ctx)
 }
 
-type IpBlockBuilder struct {
+type IPBlockBuilder struct {
 	Prefix            string
 	LocationID        gidx.PrefixedID
 	ParentBlockID     gidx.PrefixedID
@@ -41,7 +41,7 @@ type IpBlockBuilder struct {
 	IPBlockTypeID     gidx.PrefixedID
 }
 
-func (i *IpBlockBuilder) MustNew(ctx context.Context) *ent.IPBlock {
+func (i *IPBlockBuilder) MustNew(ctx context.Context) *ent.IPBlock {
 	ipbCreate := EntClient.IPBlock.Create()
 
 	if i.Prefix == "" {
@@ -71,7 +71,7 @@ func (i *IpBlockBuilder) MustNew(ctx context.Context) *ent.IPBlock {
 	}
 
 	if i.IPBlockTypeID == "" {
-		ipbt := (&IpBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)
+		ipbt := (&IPBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)
 		i.IPBlockTypeID = ipbt.ID
 	}
 

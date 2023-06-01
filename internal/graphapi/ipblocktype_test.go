@@ -18,7 +18,7 @@ func TestQuery(t *testing.T) {
 	ctx := context.Background()
 	ownerID := gidx.MustNewID("testown")
 
-	ipbt1 := (&IpBlockTypeBuilder{
+	ipbt1 := (&IPBlockTypeBuilder{
 		OwnerID: ownerID,
 	}).MustNew(ctx)
 

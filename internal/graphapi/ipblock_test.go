@@ -17,7 +17,7 @@ func TestQuery_IPBlock(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
 
-	ipb1 := (&IpBlockBuilder{}).MustNew(ctx)
+	ipb1 := (&IPBlockBuilder{}).MustNew(ctx)
 
 	testCases := []struct {
 		name     string
@@ -61,7 +61,7 @@ func Test_IPBlock_Lifecycle(t *testing.T) {
 	ctx := context.Background()
 
 	// Create a new IPBlockType to use for the IPBlock
-	ipbt := (&IpBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)
+	ipbt := (&IPBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)
 
 	t.Run("Create Update Delete", func(t *testing.T) {
 		ipb, err := client.IPBlockCreate(ctx, testclient.CreateIPBlockInput{
