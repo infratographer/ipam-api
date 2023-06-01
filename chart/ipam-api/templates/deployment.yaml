@@ -78,7 +78,7 @@ spec:
             - name: IPAMAPI_NATS_CREDS_FILE
               value: "{{ .Values.api.events.credsPath }}"
           {{- end }}
-          {- if .Values.api.oidc.enabled }}
+          {{- if .Values.api.oidc.enabled }}
           {{- with .Values.api.oidc.audience }}
             - name: IPAMAPI_OIDC_AUDIENCE
               value: "{{ . }}"
