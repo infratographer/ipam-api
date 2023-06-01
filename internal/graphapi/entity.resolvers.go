@@ -7,9 +7,8 @@ package graphapi
 import (
 	"context"
 
-	"go.infratographer.com/x/gidx"
-
 	"go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/x/gidx"
 )
 
 // FindIPAddressByID is the resolver for the findIPAddressByID field.

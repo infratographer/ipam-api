@@ -27,7 +27,9 @@ import (
 )
 
 const (
-	ownerPrefix = "testtnt"
+	ipBlockTypePrefix = "testipt"
+	locationPrefix    = "testloc"
+	ownerPrefix       = "testtnt"
 )
 
 var (
@@ -149,4 +151,8 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 
 func newString(s string) *string {
 	return &s
+}
+
+func newBool(b bool) *bool {
+	return &b
 }

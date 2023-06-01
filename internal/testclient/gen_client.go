@@ -12,10 +12,14 @@ import (
 )
 
 type TestClient interface {
+	GetIPBlock(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlock, error)
 	GetIPBlockType(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlockType, error)
+	IPBlockCreate(ctx context.Context, input CreateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockCreate, error)
+	IPBlockDelete(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockDelete, error)
 	IPBlockTypeCreate(ctx context.Context, input CreateIPBlockTypeInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockTypeCreate, error)
 	IPBlockTypeDelete(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockTypeDelete, error)
 	IPBlockTypeUpdate(ctx context.Context, id gidx.PrefixedID, input UpdateIPBlockTypeInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockTypeUpdate, error)
+	IPBlockUpdate(ctx context.Context, id gidx.PrefixedID, input UpdateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockUpdate, error)
 	ListIPBlockTypes(ctx context.Context, id gidx.PrefixedID, orderBy *IPBlockTypeOrder, httpRequestOptions ...client.HTTPRequestOption) (*ListIPBlockTypes, error)
 }
 
@@ -45,6 +49,26 @@ type Mutation struct {
 	UpdateIPBlockType IPBlockTypeUpdatePayload "json:\"updateIPBlockType\" graphql:\"updateIPBlockType\""
 	DeleteIPBlockType IPBlockTypeDeletePayload "json:\"deleteIPBlockType\" graphql:\"deleteIPBlockType\""
 }
+type GetIPBlock struct {
+	IPBlock struct {
+		ID                gidx.PrefixedID "json:\"id\" graphql:\"id\""
+		Prefix            string          "json:\"prefix\" graphql:\"prefix\""
+		AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
+		AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
+		IPBlockType       struct {
+			ID gidx.PrefixedID "json:\"id\" graphql:\"id\""
+		} "json:\"ipBlockType\" graphql:\"ipBlockType\""
+		IPAddress struct {
+			Edges []*struct {
+				Node *struct {
+					ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+					IP       string          "json:\"ip\" graphql:\"ip\""
+					Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+				} "json:\"node\" graphql:\"node\""
+			} "json:\"edges\" graphql:\"edges\""
+		} "json:\"ipAddress\" graphql:\"ipAddress\""
+	} "json:\"ip_block\" graphql:\"ip_block\""
+}
 type GetIPBlockType struct {
 	IPBlockType struct {
 		ID    gidx.PrefixedID "json:\"id\" graphql:\"id\""
@@ -55,6 +79,33 @@ type GetIPBlockType struct {
 		CreatedAt time.Time "json:\"createdAt\" graphql:\"createdAt\""
 		UpdatedAt time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
 	} "json:\"ip_block_type\" graphql:\"ip_block_type\""
+}
+type IPBlockCreate struct {
+	CreateIPBlock struct {
+		IPBlock struct {
+			ID                gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			Prefix            string          "json:\"prefix\" graphql:\"prefix\""
+			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
+			AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
+			IPBlockType       struct {
+				ID gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			} "json:\"ipBlockType\" graphql:\"ipBlockType\""
+			IPAddress struct {
+				Edges []*struct {
+					Node *struct {
+						ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+						IP       string          "json:\"ip\" graphql:\"ip\""
+						Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+					} "json:\"node\" graphql:\"node\""
+				} "json:\"edges\" graphql:\"edges\""
+			} "json:\"ipAddress\" graphql:\"ipAddress\""
+		} "json:\"ip_block\" graphql:\"ip_block\""
+	} "json:\"createIPBlock\" graphql:\"createIPBlock\""
+}
+type IPBlockDelete struct {
+	DeleteIPBlock struct {
+		DeletedID gidx.PrefixedID "json:\"deletedID\" graphql:\"deletedID\""
+	} "json:\"deleteIPBlock\" graphql:\"deleteIPBlock\""
 }
 type IPBlockTypeCreate struct {
 	CreateIPBlockType struct {
@@ -84,6 +135,28 @@ type IPBlockTypeUpdate struct {
 		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
 	} "json:\"updateIPBlockType\" graphql:\"updateIPBlockType\""
 }
+type IPBlockUpdate struct {
+	UpdateIPBlock struct {
+		IPBlock struct {
+			ID                gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			Prefix            string          "json:\"prefix\" graphql:\"prefix\""
+			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
+			AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
+			IPBlockType       struct {
+				ID gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			} "json:\"ipBlockType\" graphql:\"ipBlockType\""
+			IPAddress struct {
+				Edges []*struct {
+					Node *struct {
+						ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+						IP       string          "json:\"ip\" graphql:\"ip\""
+						Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+					} "json:\"node\" graphql:\"node\""
+				} "json:\"edges\" graphql:\"edges\""
+			} "json:\"ipAddress\" graphql:\"ipAddress\""
+		} "json:\"ip_block\" graphql:\"ip_block\""
+	} "json:\"updateIPBlock\" graphql:\"updateIPBlock\""
+}
 type ListIPBlockTypes struct {
 	Entities []*struct {
 		IPBlockType struct {
@@ -95,6 +168,41 @@ type ListIPBlockTypes struct {
 			} "json:\"edges\" graphql:\"edges\""
 		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
 	} "json:\"_entities\" graphql:\"_entities\""
+}
+
+const GetIPBlockDocument = `query GetIPBlock ($id: ID!) {
+	ip_block(id: $id) {
+		id
+		prefix
+		allowAutoSubnet
+		allowAutoAllocate
+		ipBlockType {
+			id
+		}
+		ipAddress {
+			edges {
+				node {
+					id
+					ip
+					reserved
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetIPBlock(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlock, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res GetIPBlock
+	if err := c.Client.Post(ctx, "GetIPBlock", GetIPBlockDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 const GetIPBlockTypeDocument = `query GetIPBlockType ($id: ID!) {
@@ -117,6 +225,63 @@ func (c *Client) GetIPBlockType(ctx context.Context, id gidx.PrefixedID, httpReq
 
 	var res GetIPBlockType
 	if err := c.Client.Post(ctx, "GetIPBlockType", GetIPBlockTypeDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const IPBlockCreateDocument = `mutation IPBlockCreate ($input: CreateIPBlockInput!) {
+	createIPBlock(input: $input) {
+		ip_block {
+			id
+			prefix
+			allowAutoSubnet
+			allowAutoAllocate
+			ipBlockType {
+				id
+			}
+			ipAddress {
+				edges {
+					node {
+						id
+						ip
+						reserved
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) IPBlockCreate(ctx context.Context, input CreateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockCreate, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res IPBlockCreate
+	if err := c.Client.Post(ctx, "IPBlockCreate", IPBlockCreateDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const IPBlockDeleteDocument = `mutation IPBlockDelete ($id: ID!) {
+	deleteIPBlock(id: $id) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) IPBlockDelete(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockDelete, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res IPBlockDelete
+	if err := c.Client.Post(ctx, "IPBlockDelete", IPBlockDeleteDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 
@@ -191,6 +356,44 @@ func (c *Client) IPBlockTypeUpdate(ctx context.Context, id gidx.PrefixedID, inpu
 
 	var res IPBlockTypeUpdate
 	if err := c.Client.Post(ctx, "IPBlockTypeUpdate", IPBlockTypeUpdateDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const IPBlockUpdateDocument = `mutation IPBlockUpdate ($id: ID!, $input: UpdateIPBlockInput!) {
+	updateIPBlock(id: $id, input: $input) {
+		ip_block {
+			id
+			prefix
+			allowAutoSubnet
+			allowAutoAllocate
+			ipBlockType {
+				id
+			}
+			ipAddress {
+				edges {
+					node {
+						id
+						ip
+						reserved
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) IPBlockUpdate(ctx context.Context, id gidx.PrefixedID, input UpdateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockUpdate, error) {
+	vars := map[string]interface{}{
+		"id":    id,
+		"input": input,
+	}
+
+	var res IPBlockUpdate
+	if err := c.Client.Post(ctx, "IPBlockUpdate", IPBlockUpdateDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 
