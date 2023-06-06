@@ -1,0 +1,32 @@
+// Config reference, https://containers.dev/implementors/json_reference/
+{
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"shutdownAction": "stopCompose",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"[go]": {
+					"editor.defaultFormatter": "golang.go"
+				},
+				"go.buildTags": "testtools",
+				"go.lintTool": "golangci-lint",
+				"gopls": {
+					"formatting.gofumpt": true,
+					"formatting.local": "go.infratographer.com/ipam-api"
+				}
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"golang.Go",
+				"ms-azuretools.vscode-docker",
+				"GraphQL.vscode-graphql"
+			]
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+}

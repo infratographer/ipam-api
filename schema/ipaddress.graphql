@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up ip block type by ID
+    """
+    ip_address(
+        """
+        ID of the ip block type
+        """
+        id: ID!
+    ): IPAddress!
+}
+
+extend type Mutation{
+    """
+    Create a new ip block type
+    """
+    createIPAddress(
+        """
+        Name of the ip block type
+        """
+        input: CreateIPAddressInput!
+    ): IPAddressCreatePayload!
+    """
+    Update an existing ip block type
+    """
+    updateIPAddress(
+        """
+        ID of the ip block type
+        """
+        id: ID!
+        """
+        Name of the ip block type
+        """
+        input: UpdateIPAddressInput!
+    ): IPAddressUpdatePayload!
+    """
+    Delete an existing ip block type
+    """
+    deleteIPAddress(
+        """
+        ID of the ip block type
+        """
+        id: ID!
+    ): IPAddressDeletePayload!
+}
+
+"""
+Return response for createIPAddress mutation
+"""
+type IPAddressCreatePayload {
+    """
+    Created ip block type
+    """
+    ip_address: IPAddress!
+}
+
+"""
+Return response for updateIPAddress mutation
+"""
+type IPAddressUpdatePayload {
+    """
+    Updated ip block type
+    """
+    ip_address: IPAddress!
+}
+
+"""
+Return response for deleteIPAddress mutation
+"""
+type IPAddressDeletePayload {
+    """
+    Deleted ip block type
+    """
+    deletedID: ID!
+}

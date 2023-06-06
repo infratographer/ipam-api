@@ -1,0 +1,61 @@
+query getIPAddress($id: ID!) {
+  ip_address(id: $id) {
+    id
+    ip
+    reserved
+    ipBlock {
+      id
+      prefix
+      allowAutoAllocate
+      allowAutoSubnet
+    }
+  }
+}
+
+mutation CreateIPAddress($input: CreateIPAddressInput!) {
+  createIPAddress(input: $input) {
+    ip_address {
+      id
+      ip
+      reserved
+      ipBlock {
+        id
+        ipAddress {
+          edges {
+            node {
+              id
+              ip
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateIPAddress($id: ID!, $input: UpdateIPAddressInput!) {
+  updateIPAddress(id: $id, input: $input) {
+    ip_address {
+      id
+      ip
+      reserved
+      ipBlock {
+        id
+        ipAddress {
+          edges {
+            node {
+              id
+              ip
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation DeleteIPAddress($id: ID!) {
+  deleteIPAddress(id: $id) {
+    deletedID
+  }
+}

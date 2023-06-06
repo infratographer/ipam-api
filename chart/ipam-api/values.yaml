@@ -1,0 +1,67 @@
+image:
+  repository: ghcr.io/infratographer/ipam-api
+  pullPolicy: IfNotPresent
+  tag: "v0.0.13"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  sessionAffinity: None
+  annotations: {}
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts: []
+  tls: {}
+
+api:
+  replicas: 1
+  listenPort: 7608
+  extraLabels: {}
+  extraAnnotations: {}
+  extraEnvVars: {}
+  resources: {}
+  podSecurityContext: {}
+  securityContext: {}
+  events:
+    connectionURL: "my-events-cluster.example.com:4222"
+    auth:
+      secretName: "events-creds"
+      credsPath: "/nats/creds"
+    subjects: "events"
+    queue: "ipan"
+  db:
+    uriSecret: ipam-api-db-uri
+    certSecret: ipam-api-db-ca
+  migrateOnInit: true
+
+  oidc:
+    enabled: false
+    audience: ""
+    issuer: ""
+    jwks:
+      remoteTimeout: 1m
+
+  shutdownGracePeriod: 5s
+  trustedProxies: []
+  # - "1.2.3.4"
+  # - "1.2.3.4/32"
+  # - "1.2.3.0/24"
+
+reloader:
+  enabled: false

@@ -1,0 +1,73 @@
+query GetIPBlock($id: ID!) {
+  ip_block(id: $id) {
+    id
+    prefix
+    allowAutoSubnet
+    allowAutoAllocate
+    ipBlockType {
+        id
+    }
+    ipAddress {
+        edges {
+            node {
+                id
+                ip
+                reserved
+            }
+        }
+    }
+  }
+}
+
+mutation IPBlockCreate($input: CreateIPBlockInput!) {
+    createIPBlock(input: $input) {
+        ip_block {
+            id
+            prefix
+            allowAutoSubnet
+            allowAutoAllocate
+            ipBlockType {
+                id
+            }
+            ipAddress {
+                edges {
+                    node {
+                        id
+                        ip
+                        reserved
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+mutation IPBlockUpdate($id: ID!, $input: UpdateIPBlockInput!) {
+    updateIPBlock(id: $id, input: $input) {
+        ip_block {
+            id
+            prefix
+            allowAutoSubnet
+            allowAutoAllocate
+            ipBlockType {
+                id
+            }
+            ipAddress {
+                edges {
+                    node {
+                        id
+                        ip
+                        reserved
+                    }
+                }
+            }
+        }
+    }
+}
+
+mutation IPBlockDelete($id: ID!) {
+    deleteIPBlock(id: $id) {
+        deletedID
+    }
+}

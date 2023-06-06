@@ -1,0 +1,43 @@
+---
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "common.names.fullname" . -}}
+{{- if empty .Values.ingress.hosts }}
+{{- fail ".Values.ingress.hosts must contain at least one entry" }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  name: {{ $fullName }}-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host  | quote }}
+      http:
+        paths:
+          {{- range (.paths | default (list "/")) }}
+          - pathType: {{ $.Values.ingress.pathType | default "Prefix" | quote }}
+            path: {{ . | quote }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: http
+  {{- end }}
+  {{- end }}
+  {{- with .Values.ingress.tls }}
+  tls:
+    - hosts:
+        {{- range $.Values.ingress.hosts }}
+        - {{ .host  | quote }}
+        {{- end }}
+      secretName: {{ $fullName }}-api-tls
+  {{- end }}
+{{- end }}

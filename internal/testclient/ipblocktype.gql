@@ -1,0 +1,57 @@
+query GetIPBlockType($id: ID!) {
+    ip_block_type(id: $id) {
+        id
+        name
+        owner{
+            id
+        }
+        createdAt
+        updatedAt
+    }
+}
+
+query ListIPBlockTypes($id:ID!, $orderBy: IPBlockTypeOrder){
+    _entities(representations: [{__typename: "Owner", id: $id}]) {
+        ... on Owner {
+            ip_block_type(orderBy: $orderBy) {
+                edges {
+                    node {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+}
+
+mutation IPBlockTypeCreate($input: CreateIPBlockTypeInput!) {
+    createIPBlockType(input: $input) {
+        ip_block_type {
+            id
+            name
+            owner{
+                id
+            }
+            createdAt
+            updatedAt
+        }
+    }
+}
+
+mutation IPBlockTypeUpdate($id: ID!,$input: UpdateIPBlockTypeInput!) {
+    updateIPBlockType(id: $id input: $input) {
+        ip_block_type {
+            id
+            name
+            createdAt
+            updatedAt
+        }
+    }
+}
+
+mutation IPBlockTypeDelete($id: ID!){
+    deleteIPBlockType(id: $id){
+        deletedID
+    }
+}

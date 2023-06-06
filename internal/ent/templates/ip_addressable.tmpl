@@ -1,0 +1,20 @@
+{{ define "model/additional/ip_addressable" }}
+  {{- if eq $.Name "LoadBalancer" }}
+    // IsIPv4Addressable implements interface for IPv4Addressable
+    func ({{ $.Receiver }} {{ $.Name }}) IsIPv4Addressable() {}
+  {{ end }}
+{{ end }}
+
+{{ define "ip_addressable" }}
+{{ $pkg := base $.Config.Package }}
+{{ template "header" $ }}
+
+type IPv4Addressable interface {
+
+	IsIPv4Addressable()
+}
+
+type IPv6Addressable interface {
+	IsIPv6Addressable()
+}
+{{ end }}

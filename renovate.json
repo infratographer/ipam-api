@@ -1,0 +1,49 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "packageRules": [
+    {
+      "addLabels": ["major"],
+      "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["major"],
+      "stabilityDays": 14
+    },
+    {
+      "addLabels": ["minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["minor"],
+      "stabilityDays":7
+    },
+    {
+      "addLabels": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["patch"],
+      "stabilityDays": 3
+    },
+    {
+      "addLabels": ["digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["digest"],
+      "stabilityDays": 3
+    },
+    {
+      "automerge": true,
+      "addLabels": ["indirect"],
+      "automergeType": "pr",
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["indirect"],
+      "stabilityDays": 3
+    }
+  ],
+  "postUpdateOptions": ["gomodTidy"]
+}
