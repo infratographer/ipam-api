@@ -103,6 +103,17 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
+	// jwt auth middleware
+	if viper.GetBool("oidc.enabled") {
+		auth, err := echojwtx.NewAuth(ctx, config.AppConfig.OIDC)
+		if err != nil {
+			logger.Fatal("failed to initialize jwt authentication", zap.Error(err))
+		}
+
+		auth.JWTConfig.Skipper = echox.SkipDefaultEndpoints
+		config.AppConfig.Server = config.AppConfig.Server.WithMiddleware(auth.Middleware())
+	}
+
 	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
 	if err != nil {
 		logger.Error("failed to create server", zap.Error(err))
