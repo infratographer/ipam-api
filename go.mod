@@ -31,6 +31,8 @@ require (
 	github.com/ThreeDotsLabs/watermill v1.2.0 // indirect
 	github.com/ThreeDotsLabs/watermill-nats/v2 v2.0.0 // indirect
 	github.com/garsue/watermillzap v1.2.0 // indirect
+	github.com/gofrs/uuid v4.3.1+incompatible // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
 	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/nats-io/jwt/v2 v2.4.1 // indirect
@@ -126,7 +128,6 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
-	go.infratographer.com/load-balancer-api v0.0.17
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.42.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.16.0 // indirect
