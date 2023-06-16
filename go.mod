@@ -28,6 +28,20 @@ require (
 )
 
 require (
+	github.com/ThreeDotsLabs/watermill v1.2.0 // indirect
+	github.com/ThreeDotsLabs/watermill-nats/v2 v2.0.0 // indirect
+	github.com/garsue/watermillzap v1.2.0 // indirect
+	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
+	github.com/minio/highwayhash v1.0.2 // indirect
+	github.com/nats-io/jwt/v2 v2.4.1 // indirect
+	github.com/nats-io/nats-server/v2 v2.9.17 // indirect
+	github.com/nats-io/nats.go v1.26.0 // indirect
+	github.com/nats-io/nkeys v0.4.4 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/oklog/ulid v1.3.1 // indirect
+)
+
+require (
 	ariga.io/atlas v0.10.2-0.20230427182402-87a07dfb83bf // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/MicahParks/keyfunc/v2 v2.0.3 // indirect
@@ -50,7 +64,6 @@ require (
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
-	github.com/gofrs/uuid v4.3.1+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
@@ -76,7 +89,6 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
-	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/labstack/echo-contrib v0.15.0 // indirect
 	github.com/labstack/echo-jwt/v4 v4.2.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
@@ -114,6 +126,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
+	go.infratographer.com/load-balancer-api v0.0.17
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.42.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.16.0 // indirect

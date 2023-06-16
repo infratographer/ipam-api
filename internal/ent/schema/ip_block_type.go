@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"go.infratographer.com/load-balancer-api/x/pubsubinfo"
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
 )
@@ -51,6 +52,7 @@ func (IPBlockType) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("OWNER"),
+				pubsubinfo.AdditionalSubject(),
 			),
 	}
 }
@@ -77,6 +79,7 @@ func (IPBlockType) Indexes() []ent.Index {
 // Annotations of the IPBlockType
 func (IPBlockType) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip block type node on the graph."),
 		entgql.RelayConnection(),

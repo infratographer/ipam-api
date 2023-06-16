@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"go.infratographer.com/load-balancer-api/x/pubsubinfo"
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
 )
@@ -51,6 +52,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.String("node_id").
 			GoType(gidx.PrefixedID("")).
@@ -61,6 +63,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("NODE"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.String("node_owner_id").
 			GoType(gidx.PrefixedID("")).
@@ -71,6 +74,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("OWNER"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.Bool("reserved").
 			Default(true).
@@ -103,6 +107,7 @@ func (IPAddress) Indexes() []ent.Index {
 // Annotations of the IPAddress
 func (IPAddress) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip address node on the graph."),
 		entgql.RelayConnection(),
