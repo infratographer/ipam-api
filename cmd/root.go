@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.infratographer.com/x/crdbx"
+	"go.infratographer.com/x/events"
 	"go.infratographer.com/x/goosex"
 	"go.infratographer.com/x/loggingx"
 	"go.infratographer.com/x/otelx"
@@ -66,6 +67,7 @@ func init() {
 	versionx.RegisterCobraCommand(rootCmd, func() { versionx.PrintVersion(logger) })
 	otelx.MustViperFlags(viper.GetViper(), rootCmd.Flags())
 	crdbx.MustViperFlags(viper.GetViper(), rootCmd.Flags())
+	events.MustViperFlagsForPublisher(viper.GetViper(), rootCmd.Flags(), appName)
 
 	// Setup migrate command
 	goosex.RegisterCobraCommand(rootCmd, func() {
