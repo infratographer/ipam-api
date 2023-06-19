@@ -15,6 +15,7 @@ import (
 	"go.infratographer.com/x/crdbx"
 	"go.infratographer.com/x/echojwtx"
 	"go.infratographer.com/x/echox"
+	"go.infratographer.com/x/events"
 	"go.infratographer.com/x/loggingx"
 	"go.infratographer.com/x/otelx"
 	"go.infratographer.com/x/versionx"
@@ -22,6 +23,7 @@ import (
 
 	"go.infratographer.com/ipam-api/internal/config"
 	ent "go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/ipam-api/internal/ent/generated/pubsubhooks"
 	"go.infratographer.com/ipam-api/internal/graphapi"
 )
 
@@ -72,7 +74,12 @@ func serve(ctx context.Context) error {
 		logger = loggingx.InitLogger(appName, config.AppConfig.Logging)
 	}
 
-	err := otelx.InitTracer(config.AppConfig.Tracing, appName, logger)
+	pub, err := events.NewPublisher(config.AppConfig.Events.Publisher)
+	if err != nil {
+		logger.Fatalw("failed to create publisher", "error", err)
+	}
+
+	err = otelx.InitTracer(config.AppConfig.Tracing, appName, logger)
 	if err != nil {
 		logger.Fatalw("failed to initialize tracer", "error", err)
 	}
@@ -86,7 +93,7 @@ func serve(ctx context.Context) error {
 
 	entDB := entsql.OpenDB(dialect.Postgres, db)
 
-	cOpts := []ent.Option{ent.Driver(entDB)}
+	cOpts := []ent.Option{ent.Driver(entDB), ent.EventsPublisher(pub)}
 
 	if config.AppConfig.Logging.Debug {
 		cOpts = append(cOpts,
@@ -96,6 +103,9 @@ func serve(ctx context.Context) error {
 	}
 
 	client := ent.NewClient(cOpts...)
+	defer client.Close()
+
+	pubsubhooks.PubsubHooks(client)
 
 	// Run the automatic migration tool to create all schema resources.
 	if err := client.Schema.Create(ctx); err != nil {

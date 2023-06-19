@@ -8,6 +8,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"go.infratographer.com/ipam-api/x/pubsubinfo"
+
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
 )
@@ -51,6 +53,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK_TYPE"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.String("location_id").
 			GoType(gidx.PrefixedID("")).
@@ -61,6 +64,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("LOCATION"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.String("parent_block_id").
 			GoType(gidx.PrefixedID("")).
@@ -71,6 +75,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("PARENT_BLOCK"),
+				pubsubinfo.AdditionalSubject(),
 			),
 		field.Bool("allow_auto_subnet").
 			Default(true).
@@ -115,6 +120,7 @@ func (IPBlock) Indexes() []ent.Index {
 // Annotations of the IPBlock
 func (IPBlock) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip block node on the graph."),
 		entgql.RelayConnection(),

@@ -17,7 +17,9 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"go.uber.org/zap"
 
+	"go.infratographer.com/x/events"
 	"go.infratographer.com/x/goosex"
+	"go.infratographer.com/x/testing/eventtools"
 
 	"go.infratographer.com/ipam-api/db"
 	ent "go.infratographer.com/ipam-api/internal/ent/generated"
@@ -94,7 +96,17 @@ func setupDB() {
 
 	dia, uri, cntr := parseDBURI(ctx)
 
-	c, err := ent.Open(dia, uri, ent.Debug())
+	pc, _, err := eventtools.NewNatsServer()
+	if err != nil {
+		errPanic("failed to start nats server", err)
+	}
+
+	pub, err := events.NewPublisher(pc)
+	if err != nil {
+		errPanic("failed to create events publisher", err)
+	}
+
+	c, err := ent.Open(dia, uri, ent.Debug(), ent.EventsPublisher(pub))
 	if err != nil {
 		errPanic("failed terminating test db container after failing to connect to the db", cntr.Container.Terminate(ctx))
 		errPanic("failed opening connection to database:", err)

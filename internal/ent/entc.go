@@ -24,6 +24,9 @@ import (
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
 	"go.infratographer.com/x/entx"
+	"go.infratographer.com/x/events"
+
+	"go.infratographer.com/ipam-api/x/pubsubinfo"
 )
 
 func main() {
@@ -36,6 +39,11 @@ func main() {
 	)
 	if err != nil {
 		log.Fatalf("creating entx extension: %v", err)
+	}
+
+	pubsubExt, err := pubsubinfo.NewExtension()
+	if err != nil {
+		log.Fatalf("creating pubsubinfo extension: %v", err)
 	}
 
 	gqlExt, err := entgql.NewExtension(
@@ -55,6 +63,10 @@ func main() {
 		entc.Extensions(
 			xExt,
 			gqlExt,
+			pubsubExt,
+		),
+		entc.Dependency(
+			entc.DependencyType(&events.Publisher{}),
 		),
 		// entc.TemplateDir("./internal/ent/templates"),
 		// entc.FeatureNames("intercept"),
