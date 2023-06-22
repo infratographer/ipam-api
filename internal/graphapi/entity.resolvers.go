@@ -6,9 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/ipam-api/internal/ent/generated/ipaddress"
 	"go.infratographer.com/x/gidx"
 )
 
@@ -19,7 +19,11 @@ func (r *entityResolver) FindIPAddressByID(ctx context.Context, id gidx.Prefixed
 
 // FindIPAddressableByID is the resolver for the findIPAddressableByID field.
 func (r *entityResolver) FindIPAddressableByID(ctx context.Context, id gidx.PrefixedID) (*IPAddressable, error) {
-	panic(fmt.Errorf("not implemented: FindIPAddressableByID - findIPAddressableByID"))
+	addrs, err := r.client.IPAddress.Query().Where(ipaddress.NodeID(id)).All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &IPAddressable{ID: id, IPAddresses: addrs}, nil
 }
 
 // FindIPBlockByID is the resolver for the findIPBlockByID field.

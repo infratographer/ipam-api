@@ -1,0 +1,9 @@
+query GetIPAddressesByNode($id: ID!) {
+  _entities(representations: { __typename: "IPAddressable", id: $id}) {
+    ... on IPAddressable {
+        IPAddresses {
+          ip 
+          }
+        }
+      }
+    }
