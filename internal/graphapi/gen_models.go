@@ -25,6 +25,15 @@ type IPAddressUpdatePayload struct {
 	IPAddress *generated.IPAddress `json:"ip_address"`
 }
 
+// IPAddressable provides an interface for describing IP addresses attached to a node
+type IPAddressable struct {
+	ID gidx.PrefixedID `json:"id"`
+	// IPAddressable describes IP addresses attached to a node
+	IPAddresses []*generated.IPAddress `json:"IPAddresses"`
+}
+
+func (IPAddressable) IsEntity() {}
+
 // Return response for createIPBlock mutation
 type IPBlockCreatePayload struct {
 	// Created ip block type

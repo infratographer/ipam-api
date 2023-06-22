@@ -8,8 +8,20 @@ import (
 	"context"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/ipam-api/internal/ent/generated/ipaddress"
 	"go.infratographer.com/x/gidx"
 )
+
+// Node is the resolver for the node field.
+func (r *iPAddressResolver) Node(ctx context.Context, obj *generated.IPAddress) (*IPAddressable, error) {
+	return &IPAddressable{ID: obj.NodeID}, nil
+}
+
+// IPAddresses is the resolver for the IPAddresses field.
+func (r *iPAddressableResolver) IPAddresses(ctx context.Context, obj *IPAddressable) ([]*generated.IPAddress, error) {
+	m, err := r.client.IPAddress.Query().Where(ipaddress.NodeID(obj.ID)).All(ctx)
+	return m, err
+}
 
 // CreateIPAddress is the resolver for the createIPAddress field.
 func (r *mutationResolver) CreateIPAddress(ctx context.Context, input generated.CreateIPAddressInput) (*IPAddressCreatePayload, error) {
@@ -50,7 +62,11 @@ func (r *queryResolver) IPAddress(ctx context.Context, id gidx.PrefixedID) (*gen
 	return r.client.IPAddress.Get(ctx, id)
 }
 
+// IPAddressable returns IPAddressableResolver implementation.
+func (r *Resolver) IPAddressable() IPAddressableResolver { return &iPAddressableResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+type iPAddressableResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
