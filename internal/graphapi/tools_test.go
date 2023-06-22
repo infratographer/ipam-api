@@ -96,12 +96,12 @@ func setupDB() {
 
 	dia, uri, cntr := parseDBURI(ctx)
 
-	pc, _, err := eventtools.NewNatsServer()
+	nats, err := eventtools.NewNatsServer()
 	if err != nil {
 		errPanic("failed to start nats server", err)
 	}
 
-	pub, err := events.NewPublisher(pc)
+	pub, err := events.NewPublisher(nats.PublisherConfig)
 	if err != nil {
 		errPanic("failed to create events publisher", err)
 	}
