@@ -9,7 +9,7 @@ erDiagram
     NODE ||--o| IPBlockType : "has"
     IPBlockType {
         string Name
-        id TenantID
+        id OwnerID
     }
 
     IPBlockType ||--o{ IPBlock : "has"
@@ -27,7 +27,7 @@ erDiagram
         string IP
         id BlockID
         id NodeID
-        id NodeTenantID
+        id NodeOwnerID
         boolean Reserved
     }
 ```
@@ -48,7 +48,7 @@ mutation{
   createIPBlockType(
     input: {
         name:"super-sweet-ip-block-type",
-        tenantID:"tenants-df234a22-f849-11ed-b67e-0242ac120002"
+        ownerID:"tenants-df234a22-f849-11ed-b67e-0242ac120002"
     }
   )
   {
