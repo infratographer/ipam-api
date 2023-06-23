@@ -69,6 +69,8 @@ type IPAddress struct {
 	// Reserve the IP without it being assigned.
 	Reserved bool    `json:"reserved"`
 	IPBlock  IPBlock `json:"ipBlock"`
+	// IPAddresses that are associated with a given node
+	Node IPAddressable `json:"node"`
 }
 
 func (IPAddress) IsNode() {}
@@ -176,6 +178,15 @@ type IPAddressWhereInput struct {
 	HasIPBlock     *bool                `json:"hasIPBlock,omitempty"`
 	HasIPBlockWith []*IPBlockWhereInput `json:"hasIPBlockWith,omitempty"`
 }
+
+// IPAddressable provides an interface for describing IP addresses attached to a node
+type IPAddressable struct {
+	ID gidx.PrefixedID `json:"id"`
+	// IPAddressable describes IP addresses attached to a node
+	IPAddresses []*IPAddress `json:"IPAddresses"`
+}
+
+func (IPAddressable) IsEntity() {}
 
 type IPBlock struct {
 	// The ID of the IP Block.

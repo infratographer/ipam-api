@@ -89,3 +89,67 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 		require.NotNil(t, ipaDelete)
 	})
 }
+
+func Test_IPAddressable(t *testing.T) {
+	client := graphTestClient()
+	ctx := context.Background()
+
+	ipas := []gidx.PrefixedID{}
+
+	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
+	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID}).MustNew(ctx)
+
+	node := gidx.MustNewID(nodePrefix)
+
+	// Create first IP address attached to node
+	ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
+		IP:          gofakeit.IPv4Address(),
+		NodeID:      node,
+		NodeOwnerID: gidx.MustNewID(ownerPrefix),
+		Reserved:    newBool(true),
+		IPBlockID:   ipb.ID,
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, ipa)
+
+	ipas = append(ipas, ipa.CreateIPAddress.IPAddress.ID)
+
+	// Check that only 1 IP address is attached to node
+	addrs, err := client.GetIPAddressesByNode(ctx, node)
+
+	require.NoError(t, err)
+	assert.Len(t, addrs.Entities[0].IPAddresses, 1)
+
+	// Create second IP address attached to node
+	ipa, err = client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
+		IP:          gofakeit.IPv4Address(),
+		NodeID:      node,
+		NodeOwnerID: gidx.MustNewID(ownerPrefix),
+		Reserved:    newBool(true),
+		IPBlockID:   ipb.ID,
+	})
+
+	require.NoError(t, err)
+	assert.NotNil(t, ipa)
+
+	// Check that 2 IP addresses are attached to node
+	addrs, err = client.GetIPAddressesByNode(ctx, node)
+
+	require.NoError(t, err)
+	assert.Len(t, addrs.Entities[0].IPAddresses, 2)
+
+	ipas = append(ipas, ipa.CreateIPAddress.IPAddress.ID)
+
+	// Delete IP addresses attached to node
+	for _, ipa := range ipas {
+		_, err := client.DeleteIPAddress(ctx, ipa)
+		require.NoError(t, err)
+	}
+
+	// Check that no IP addresses are attached to node
+	addrs, err = client.GetIPAddressesByNode(ctx, node)
+
+	require.NoError(t, err)
+	assert.Len(t, addrs.Entities[0].IPAddresses, 0)
+}

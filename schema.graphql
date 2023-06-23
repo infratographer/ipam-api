@@ -48,6 +48,8 @@ type IPAddress implements Node @key(fields: "id") {
 	"""Reserve the IP without it being assigned."""
 	reserved: Boolean!
 	ipBlock: IPBlock!
+	"""IPAddresses that are associated with a given node"""
+	node: IPAddressable!
 }
 """A connection to a list of items."""
 type IPAddressConnection {
@@ -153,6 +155,12 @@ input IPAddressWhereInput {
 	"""ip_block edge predicates"""
 	hasIPBlock: Boolean
 	hasIPBlockWith: [IPBlockWhereInput!]
+}
+"""IPAddressable provides an interface for describing IP addresses attached to a node"""
+type IPAddressable @key(fields: "id") @interfaceObject {
+	id: ID!
+	"""IPAddressable describes IP addresses attached to a node"""
+	IPAddresses: [IPAddress]! @goField(forceResolver: true)
 }
 type IPBlock implements Node @key(fields: "id") {
 	"""The ID of the IP Block."""
@@ -577,7 +585,7 @@ input UpdateIPBlockTypeInput {
 	"""The name of the ip block type."""
 	name: String
 }
-union _Entity = IPAddress | IPBlock | IPBlockType | Owner
+union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | Owner
 type _Service {
 	sdl: String
 }
@@ -593,7 +601,7 @@ directive @shareable on OBJECT | FIELD_DEFINITION
 directive @tag(name: String!) repeatable on FIELD_DEFINITION | INTERFACE | OBJECT | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 directive @override(from: String!) on FIELD_DEFINITION
 directive @inaccessible on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
-#directive @interfaceObject on OBJECT
+directive @interfaceObject on OBJECT
 extend schema
   @link(
 	url: "https://specs.apollo.dev/federation/v2.3"

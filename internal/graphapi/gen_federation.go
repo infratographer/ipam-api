@@ -100,6 +100,26 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 				list[idx[i]] = entity
 				return nil
 			}
+		case "IPAddressable":
+			resolverName, err := entityResolverNameForIPAddressable(ctx, rep)
+			if err != nil {
+				return fmt.Errorf(`finding resolver for Entity "IPAddressable": %w`, err)
+			}
+			switch resolverName {
+
+			case "findIPAddressableByID":
+				id0, err := ec.unmarshalNID2goᚗinfratographerᚗcomᚋxᚋgidxᚐPrefixedID(ctx, rep["id"])
+				if err != nil {
+					return fmt.Errorf(`unmarshalling param 0 for findIPAddressableByID(): %w`, err)
+				}
+				entity, err := ec.resolvers.Entity().FindIPAddressableByID(ctx, id0)
+				if err != nil {
+					return fmt.Errorf(`resolving Entity "IPAddressable": %w`, err)
+				}
+
+				list[idx[i]] = entity
+				return nil
+			}
 		case "IPBlock":
 			resolverName, err := entityResolverNameForIPBlock(ctx, rep)
 			if err != nil {
@@ -244,6 +264,23 @@ func entityResolverNameForIPAddress(ctx context.Context, rep map[string]interfac
 		return "findIPAddressByID", nil
 	}
 	return "", fmt.Errorf("%w for IPAddress", ErrTypeNotFound)
+}
+
+func entityResolverNameForIPAddressable(ctx context.Context, rep map[string]interface{}) (string, error) {
+	for {
+		var (
+			m   map[string]interface{}
+			val interface{}
+			ok  bool
+		)
+		_ = val
+		m = rep
+		if _, ok = m["id"]; !ok {
+			break
+		}
+		return "findIPAddressableByID", nil
+	}
+	return "", fmt.Errorf("%w for IPAddressable", ErrTypeNotFound)
 }
 
 func entityResolverNameForIPBlock(ctx context.Context, rep map[string]interface{}) (string, error) {

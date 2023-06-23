@@ -73,3 +73,27 @@ type IPAddressDeletePayload {
     """
     deletedID: ID!
 }
+
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.3"
+    import: ["@key", "@interfaceObject", "@external", "@shareable"]
+  )
+
+"""
+IPAddressable provides an interface for describing IP addresses attached to a node
+"""
+type IPAddressable @key(fields: "id") @interfaceObject {
+  id: ID!
+  """
+  IPAddressable describes IP addresses attached to a node
+  """
+  IPAddresses: [IPAddress]! @goField(forceResolver: true)
+}
+
+extend type IPAddress {
+  """
+  IPAddresses that are associated with a given node
+  """
+  node: IPAddressable!
+}

@@ -14,6 +14,7 @@ import (
 type TestClient interface {
 	CreateIPAddress(ctx context.Context, input CreateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*CreateIPAddress, error)
 	DeleteIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*DeleteIPAddress, error)
+	GetIPAddressesByNode(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddressesByNode, error)
 	GetIPBlock(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlock, error)
 	GetIPBlockType(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPBlockType, error)
 	IPBlockCreate(ctx context.Context, input CreateIPBlockInput, httpRequestOptions ...client.HTTPRequestOption) (*IPBlockCreate, error)
@@ -77,6 +78,13 @@ type DeleteIPAddress struct {
 	DeleteIPAddress struct {
 		DeletedID gidx.PrefixedID "json:\"deletedID\" graphql:\"deletedID\""
 	} "json:\"deleteIPAddress\" graphql:\"deleteIPAddress\""
+}
+type GetIPAddressesByNode struct {
+	Entities []*struct {
+		IPAddresses []*struct {
+			IP string "json:\"ip\" graphql:\"ip\""
+		} "json:\"IPAddresses\" graphql:\"IPAddresses\""
+	} "json:\"_entities\" graphql:\"_entities\""
 }
 type GetIPBlock struct {
 	IPBlock struct {
@@ -281,6 +289,30 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id gidx.PrefixedID, httpRe
 
 	var res DeleteIPAddress
 	if err := c.Client.Post(ctx, "DeleteIPAddress", DeleteIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetIPAddressesByNodeDocument = `query GetIPAddressesByNode ($id: ID!) {
+	_entities(representations: {__typename:"IPAddressable",id:$id}) {
+		... on IPAddressable {
+			IPAddresses {
+				ip
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetIPAddressesByNode(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddressesByNode, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res GetIPAddressesByNode
+	if err := c.Client.Post(ctx, "GetIPAddressesByNode", GetIPAddressesByNodeDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 
