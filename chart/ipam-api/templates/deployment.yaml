@@ -59,45 +59,18 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
+        {{- if .Values.api.extraEnvVars }}
           env:
-            - name: IPAMAPI_SERVER_LISTEN
-              value: ":{{ .Values.api.listenPort }}"
-            - name: IPAMAPI_SERVER_SHUTDOWN_GRACE_PERIOD
-              value: "{{ .Values.api.shutdownGracePeriod }}"
-          {{- with .Values.api.trustedProxies }}
-            - name: IPAMAPI_SERVER_TRUSTED_PROXIES
-              value: "{{ join " " . }}"
+          {{- range .Values.api.extraEnvVars }}
+            - name: {{ .name }}
+              value: {{ .value }}
           {{- end }}
-            - name: IPAMAPI_NATS_URL
-              value: "{{ .Values.api.events.connectionURL }}"
-            - name: IPAMAPI_NATS_STREAM_NAME
-              value: "{{ .Values.api.events.queue | default "ipamapi" }}"
-            - name: IPAMAPI_NATS_SUBJECT_PREFIX
-              value: "{{ .Values.api.events.subjects }}"
-          {{- if .Values.api.events.auth.secretName }}
-            - name: IPAMAPI_NATS_CREDS_FILE
-              value: "{{ .Values.api.events.credsPath }}"
-          {{- end }}
-          {{- if .Values.api.oidc.enabled }}
-          {{- with .Values.api.oidc.audience }}
-            - name: IPAMAPI_OIDC_AUDIENCE
-              value: "{{ . }}"
-          {{- end }}
-          {{- with .Values.api.oidc.issuer }}
-            - name: IPAMAPI_OIDC_ISSUER
-              value: "{{ . }}"
-          {{- end }}
-          {{- with .Values.api.oidc.jwks.remoteTimeout }}
-            - name: IPAMAPI_OIDC_JWKS_REMOTE_TIMEOUT
-              value: "{{ . }}"
-          {{- end }}
-          {{- else }}
-            - name: IPAMAPI_OIDC_ENABLED
-              value: "false"
           {{- end }}
           envFrom:
             - secretRef:
                 name: {{ .Values.api.db.uriSecret }}
+            - configMapRef:
+                name: {{ include "common.names.fullname" . }}-config
           {{- with .Values.api.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

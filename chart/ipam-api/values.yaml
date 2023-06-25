@@ -43,8 +43,7 @@ api:
     auth:
       secretName: "events-creds"
       credsPath: "/nats/creds"
-    subjects: "events"
-    queue: "ipan"
+    topicPrefix: "com.infratographer"
   db:
     uriSecret: ipam-api-db-uri
     certSecret: ipam-api-db-ca
