@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" . }}-config
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+data:
+  IPAMAPI_EVENTS_PUBLISHER_PREFIX: "{{ .Values.api.events.topicPrefix }}"
+  IPAMAPI_EVENTS_PUBLISHER_URL: "{{ .Values.api.events.connectionURL }}"
+  IPAMAPI_OIDC: "{{ .Values.api.oidc.enabled }}"
+  IPAMAPI_OIDC_AUDIENCE: "{{ .Values.api.oidc.audience }}"
+  IPAMAPI_OIDC_ISSUER: "{{ .Values.api.oidc.issuer }}"
+  IPAMAPI_OIDC_JWKS_REMOTE_TIMEOUT: "{{ .Values.api.oidc.jwksRemoteTimeout }}"
+  IPAMAPI_SERVER_LISTEN: ":{{ .Values.api.listenPort }}"
+  IPAMAPI_SERVER_SHUTDOWN_GRACE_PERIOD: "{{ .Values.api.shutdownGracePeriod }}"
+{{- with .Values.api.trustedProxies }}
+  IPAMAPI_SERVER_TRUSTED_PROXIES: "{{ join " " . }}"
+{{- end }}
