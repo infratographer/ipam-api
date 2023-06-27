@@ -4,8 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	// "github.com/3th1nk/cidr"
-
 	"github.com/3th1nk/cidr"
 	"github.com/shurcooL/graphql"
 	"go.infratographer.com/x/gidx"
@@ -117,17 +115,16 @@ func (c *Client) GetNextAvailableAddressFromBlock(ctx context.Context, id string
 	for {
 		if !slices.Contains(ips, bgn.String()) && bgn.String() != network && bgn.String() != broadcast {
 			nxt = bgn.String()
-			break
+			return nxt, err
 		}
 
 		cidr.IPIncr(bgn)
 
 		if bgn.Equal(end) {
 			err = ErrNoAvailableIPs
+			return "", err
 		}
 	}
-
-	return nxt, err
 }
 
 // CreateIPAddressFromBlock creates an IP Address from the next available address in a given block
@@ -182,9 +179,6 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id string) (*DeleteIPAddre
 	}
 
 	var ipd DeleteIPAddress
-	// if err := c.gqlCli.Query(ctx, &ipb, vars); err != nil {
-	// 	return nil, err
-	// }
 	if err := c.gqlCli.Mutate(ctx, &ipd, vars); err != nil {
 		return nil, err
 	}
