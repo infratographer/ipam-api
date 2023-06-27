@@ -7,6 +7,7 @@ replace github.com/testcontainers/testcontainers-go => github.com/testcontainers
 require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.3
+	github.com/3th1nk/cidr v0.2.0
 	github.com/99designs/gqlgen v0.17.32
 	github.com/Yamashou/gqlgenc v0.13.5
 	github.com/brianvoe/gofakeit/v6 v6.21.0
@@ -16,6 +17,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
@@ -25,6 +27,7 @@ require (
 	github.com/wundergraph/graphql-go-tools v1.63.1
 	go.infratographer.com/x v0.3.2
 	go.uber.org/zap v1.24.0
+	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 )
 
 require (
@@ -143,7 +146,6 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
