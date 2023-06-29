@@ -480,8 +480,8 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/subosito/gotenv v1.4.2 h1:X1TuBLAMDFbaTAChgCBLu3DU3UPyELpnF2jjJ2cz/S8=
 github.com/subosito/gotenv v1.4.2/go.mod h1:ayKnFf/c6rvx/2iiLrJUk1e6plDbT3edrFNGqEflhK0=
-github.com/testcontainers/testcontainers-go v0.0.0-20230503220718-0df60de8ccd8 h1:atmQux3l6blXSWP4HA4UiUO0VASfsLQr5A1uRtDdg/A=
-github.com/testcontainers/testcontainers-go v0.0.0-20230503220718-0df60de8ccd8/go.mod h1:LTa6q4eygL67Y8LvAmjaUGIiFZlZ+VYvHOWjXLWP8Vg=
+github.com/testcontainers/testcontainers-go v0.21.0 h1:syePAxdeTzfkap+RrJaQZpJQ/s/fsUgn11xIvHrOE9U=
+github.com/testcontainers/testcontainers-go v0.21.0/go.mod h1:c1ez3WVRHq7T/Aj+X3TIipFBwkBaNT5iNCY8+1b83Ng=
 github.com/testcontainers/testcontainers-go/modules/postgres v0.20.1 h1:PkAq2/sxchYxLiepcshIUnMzmhlecakGOCTtKEuZCA0=
 github.com/testcontainers/testcontainers-go/modules/postgres v0.20.1/go.mod h1:c9mDiyvz7se25wEvvkx/8ok1YIIsQE9ACItnim7C0xw=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
