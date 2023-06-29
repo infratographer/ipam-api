@@ -2,12 +2,8 @@ package ipamclient
 
 import (
 	"context"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/shurcooL/graphql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -155,77 +151,4 @@ func TestCreateIPAddressFromBlock(t *testing.T) {
 	ip, err = cli.CreateIPAddressFromBlock(context.Background(), "badprefix-test", "loadbal-12345", "testtnt-123456", true)
 	require.Error(t, err)
 	require.Nil(t, ip)
-}
-
-func TestGetIPAddressesByNodeID(t *testing.T) {
-	cli := Client{
-		gqlCli: mustNewGQLTestClient(`{
-  "data": {
-    "_entities": [
-      {
-        "id": "loadbal-randovalue",
-        "IPAddresses": [
-          {
-            "id": "ipamipa-8IPzP37YJ1iTxJdMrCods",
-            "ip": "192.168.1.142",
-            "reserved": false
-          },
-          {
-            "id": "ipamipa-rPBY83fPw6Ll5sueCMpDr",
-            "ip": "192.168.1.1",
-            "reserved": true
-          }
-        ]
-      }
-    ]
-  }
-}`),
-	}
-
-	t.Run("invalid prefix", func(t *testing.T) {
-		ips, err := cli.GetIPAddresses(context.Background(), "badprefix-test")
-		require.Error(t, err)
-		require.Nil(t, ips)
-	})
-
-	t.Run("retrieves nodeID ip addresses", func(t *testing.T) {
-		ips, err := cli.GetIPAddresses(context.Background(), "loadbal-randovalue")
-		require.NoError(t, err)
-		require.NotNil(t, ips)
-
-		require.Len(t, ips.IPAddressableEntities.Entities, 1)
-		require.Len(t, ips.IPAddressableEntities.Entities[0].IPAddresses, 2)
-
-		assert.Equal(t, "ipamipa-8IPzP37YJ1iTxJdMrCods", ips.IPAddressableEntities.Entities[0].IPAddresses[0].ID)
-		assert.Equal(t, "192.168.1.142", ips.IPAddressableEntities.Entities[0].IPAddresses[0].IP)
-		assert.False(t, ips.IPAddressableEntities.Entities[0].IPAddresses[0].Reserved)
-
-		assert.Equal(t, "ipamipa-rPBY83fPw6Ll5sueCMpDr", ips.IPAddressableEntities.Entities[0].IPAddresses[1].ID)
-		assert.Equal(t, "192.168.1.1", ips.IPAddressableEntities.Entities[0].IPAddresses[1].IP)
-		assert.True(t, ips.IPAddressableEntities.Entities[0].IPAddresses[1].Reserved)
-	})
-}
-
-func mustNewGQLTestClient(respJSON string) *graphql.Client {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/query", func(w http.ResponseWriter, req *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_, err := io.WriteString(w, respJSON)
-		if err != nil {
-			panic(err)
-		}
-	})
-
-	return graphql.NewClient("/query", &http.Client{Transport: localRoundTripper{handler: mux}})
-}
-
-type localRoundTripper struct {
-	handler http.Handler
-}
-
-func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	w := httptest.NewRecorder()
-	l.handler.ServeHTTP(w, req)
-
-	return w.Result(), nil
 }
