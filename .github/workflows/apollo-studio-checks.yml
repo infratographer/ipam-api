@@ -1,0 +1,102 @@
+name: Apollo Schema Check
+
+# Generally running a pull_request_target with secrets from the fork is risky, however we are only using the schema.graphql
+# file and not executing any code from the branch so it's safe here.
+on:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
+      APOLLO_VCS_COMMIT: ${{ github.event.pull_request.head.sha }}
+      APOLLO_VCS_REMOTE_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+      APOLLO_VCS_BRANCH: ${{ github.event.pull_request.head.label }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Install Rover
+        run: |
+          curl -sSL https://rover.apollo.dev/nix/latest | sh
+          echo "$HOME/.rover/bin" >> $GITHUB_PATH
+      - name: Run check against infratographer supergraph
+        run: |
+          rover subgraph check --name ipam-api --schema schema.graphql infratographer@main --format json --output subgraph-check.json
+      - name: Generate report comment
+        run: |
+          RESULTS_FILE=subgraph-check.json
+          echo -e "#### GraphQL Schema Check\n" > comment.txt
+
+          print_details () {
+            TARGET_URL=$(jq '.data.target_url' $RESULTS_FILE | tr -d \")
+            echo -e "🔗 [View full schema check details]($TARGET_URL)\n" >> comment.txt
+          }
+
+          print_changes_for () {
+            SEV=$(echo $1 | tr -d \")
+            COUNT=$(jq -c ".data.changes[] | select(.severity == \"$SEV\")" $RESULTS_FILE | wc -l)
+            echo -e "<details>\n\n<summary>$COUNT $SEV Changes</summary>\n" >> comment.txt
+            echo -e "| Change Type | Description |\n| --- | --- |" >> comment.txt
+            jq -j ".data.changes[] | select(.severity == \"$SEV\") | (\"| \", .code, \" | \", .description, \" |\"),\"\n\"" $RESULTS_FILE | sort >> comment.txt
+            echo -e "\n</details>\n" >> comment.txt
+          }
+
+          print_errors () {
+            SUMMARY=$(jq -j '.error.message' $RESULTS_FILE)
+            echo -e "<details>\n\n<summary>$SUMMARY</summary>\n" >> comment.txt
+            echo -e "| Error Type | Code | Message |\n| --- | --- | --- |" >> comment.txt
+            jq -j '.error.details.build_errors[] | ("| ", .type, " | ", .code, " | ", .message, " |"),"\n"' $RESULTS_FILE >> comment.txt
+            echo -e "\n</details>\n" >> comment.txt
+          }
+
+          ERROR=$(jq '.error' $RESULTS_FILE)
+
+          if [ "$ERROR" != "null" ]; then
+            echo -e "❌ Schema composition failed\n" >> comment.txt
+            print_errors
+            print_details
+            exit 0
+          fi
+
+          FAILURE_COUNT=$(jq '.data.failure_count' $RESULTS_FILE)
+          CHANGE_COUNT=$(jq '.data.changes | length' $RESULTS_FILE)
+          OP_CHECK_COUNT=$(jq '.data.operation_check_count' $RESULTS_FILE)
+
+          echo -e "Compared $CHANGE_COUNT schema changes against $OP_CHECK_COUNT operations\n" >> comment.txt
+
+          if [ $CHANGE_COUNT -eq 0 ]; then
+            echo -e "✅ Found **no changes**\n\n" >> comment.txt
+            print_details
+            exit 0
+          fi
+
+          if [ $FAILURE_COUNT -eq 0 ]
+          then
+            echo -e "✅ Found **no breaking changes**\n" >> comment.txt
+          else
+            echo -e "❌ Found **$FAILURE_COUNT breaking changes**\n" >> comment.txt
+          fi
+
+          sev_array=()
+          IFS=$'\n' read -r -d '' -a sev_array < <( jq '.data.changes[].severity' $RESULTS_FILE | sort| uniq && printf '\0' )
+
+          for i in "${sev_array[@]}"
+          do
+            print_changes_for $i
+          done
+
+          print_details
+
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: comment.txt
+          comment_tag: infratographer-apollo-graph-check
