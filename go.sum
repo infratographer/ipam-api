@@ -64,8 +64,8 @@ github.com/ThreeDotsLabs/watermill-nats/v2 v2.0.0 h1:ZbdQ+cHwOZmXByEoKUH8SS6qR/e
 github.com/ThreeDotsLabs/watermill-nats/v2 v2.0.0/go.mod h1:X6pcl579pScj4mII3KM/WJ+bcOqORqiCToy92f4gqJ4=
 github.com/XSAM/otelsql v0.23.0 h1:NsJQS9YhI1+RDsFqE9mW5XIQmPmdF/qa8qQOLZN8XEA=
 github.com/XSAM/otelsql v0.23.0/go.mod h1:oX4LXMsb+9lAZhvHjUS61oQP/hbcJRadWHnBKNL+LuM=
-github.com/Yamashou/gqlgenc v0.13.5 h1:aBv3D6pgY8ZXr6ArYHMtTkggui8eQVgjhgDaGnNbkxk=
-github.com/Yamashou/gqlgenc v0.13.5/go.mod h1:+z+FRCtGrNmgTxweAUiCodOmQJLTCNtnRNAqhewf1Q8=
+github.com/Yamashou/gqlgenc v0.14.0 h1:KVzUuVQKfl4Phm5Cw4yeFThDAxZoIBR9XLoK/4O1O6U=
+github.com/Yamashou/gqlgenc v0.14.0/go.mod h1:+z+FRCtGrNmgTxweAUiCodOmQJLTCNtnRNAqhewf1Q8=
 github.com/agext/levenshtein v1.2.1 h1:QmvMAjj2aEICytGiWzmxoE0x2KZvE0fvmqMOfy2tjT8=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
