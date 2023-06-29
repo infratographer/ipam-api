@@ -257,7 +257,7 @@ type IPBlockType struct {
 	Name    string            `json:"name"`
 	IPBlock IPBlockConnection `json:"ipBlock"`
 	// The owner of the ip block type.
-	Owner Owner `json:"owner"`
+	Owner ResourceOwner `json:"owner"`
 }
 
 func (IPBlockType) IsNode() {}
@@ -430,13 +430,6 @@ type IPBlockWhereInput struct {
 	HasIPAddressWith []*IPAddressWhereInput `json:"hasIPAddressWith,omitempty"`
 }
 
-type Owner struct {
-	ID          gidx.PrefixedID       `json:"id"`
-	IPBlockType IPBlockTypeConnection `json:"ip_block_type"`
-}
-
-func (Owner) IsEntity() {}
-
 // Information about pagination in a connection.
 // https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo
 type PageInfo struct {
@@ -449,6 +442,13 @@ type PageInfo struct {
 	// When paginating forwards, the cursor to continue.
 	EndCursor *string `json:"endCursor,omitempty"`
 }
+
+type ResourceOwner struct {
+	ID          gidx.PrefixedID       `json:"id"`
+	IPBlockType IPBlockTypeConnection `json:"ip_block_type"`
+}
+
+func (ResourceOwner) IsEntity() {}
 
 // Update an existing ip address type node.
 type UpdateIPAddressInput struct {

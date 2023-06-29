@@ -70,9 +70,9 @@ type IPBlockUpdatePayload struct {
 	IPBlock *generated.IPBlock `json:"ip_block"`
 }
 
-type Owner struct {
+type ResourceOwner struct {
 	ID          gidx.PrefixedID                  `json:"id"`
 	IPBlockType *generated.IPBlockTypeConnection `json:"ip_block_type"`
 }
 
-func (Owner) IsEntity() {}
+func (ResourceOwner) IsEntity() {}

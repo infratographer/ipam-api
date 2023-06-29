@@ -111,6 +111,7 @@ func (IPAddress) Annotations() []schema.Annotation {
 		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip address node on the graph."),
+		prefixIDDirective(IPAddressPrefix),
 		entgql.RelayConnection(),
 		entgql.Mutations(
 			entgql.MutationCreate().Description("Create a new ip address type node."),

@@ -83,6 +83,7 @@ func (IPBlockType) Annotations() []schema.Annotation {
 		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip block type node on the graph."),
+		prefixIDDirective(IPBlockTypePrefix),
 		entgql.RelayConnection(),
 		entgql.Mutations(
 			entgql.MutationCreate().Description("Create a new ip block type node."),

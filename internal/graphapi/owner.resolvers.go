@@ -14,12 +14,12 @@ import (
 )
 
 // Owner is the resolver for the owner field.
-func (r *iPBlockTypeResolver) Owner(ctx context.Context, obj *generated.IPBlockType) (*Owner, error) {
-	return &Owner{ID: obj.OwnerID}, nil
+func (r *iPBlockTypeResolver) Owner(ctx context.Context, obj *generated.IPBlockType) (*ResourceOwner, error) {
+	return &ResourceOwner{ID: obj.OwnerID}, nil
 }
 
 // IPBlockType is the resolver for the ip_block_type field.
-func (r *ownerResolver) IPBlockType(ctx context.Context, obj *Owner, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) (*generated.IPBlockTypeConnection, error) {
+func (r *resourceOwnerResolver) IPBlockType(ctx context.Context, obj *ResourceOwner, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) (*generated.IPBlockTypeConnection, error) {
 	return r.client.IPBlockType.Query().
 		Where(
 			ipblocktype.OwnerID(obj.ID),
@@ -34,7 +34,7 @@ func (r *ownerResolver) IPBlockType(ctx context.Context, obj *Owner, after *entg
 	)
 }
 
-// Owner returns OwnerResolver implementation.
-func (r *Resolver) Owner() OwnerResolver { return &ownerResolver{r} }
+// ResourceOwner returns ResourceOwnerResolver implementation.
+func (r *Resolver) ResourceOwner() ResourceOwnerResolver { return &resourceOwnerResolver{r} }
 
-type ownerResolver struct{ *Resolver }
+type resourceOwnerResolver struct{ *Resolver }
