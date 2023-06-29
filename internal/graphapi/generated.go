@@ -45,8 +45,8 @@ type ResolverRoot interface {
 	IPAddressable() IPAddressableResolver
 	IPBlockType() IPBlockTypeResolver
 	Mutation() MutationResolver
-	Owner() OwnerResolver
 	Query() QueryResolver
+	ResourceOwner() ResourceOwnerResolver
 }
 
 type DirectiveRoot struct {
@@ -59,7 +59,7 @@ type ComplexityRoot struct {
 		FindIPAddressableByID func(childComplexity int, id gidx.PrefixedID) int
 		FindIPBlockByID       func(childComplexity int, id gidx.PrefixedID) int
 		FindIPBlockTypeByID   func(childComplexity int, id gidx.PrefixedID) int
-		FindOwnerByID         func(childComplexity int, id gidx.PrefixedID) int
+		FindResourceOwnerByID func(childComplexity int, id gidx.PrefixedID) int
 	}
 
 	IPAddress struct {
@@ -178,11 +178,6 @@ type ComplexityRoot struct {
 		UpdateIPBlockType func(childComplexity int, id gidx.PrefixedID, input generated.UpdateIPBlockTypeInput) int
 	}
 
-	Owner struct {
-		ID          func(childComplexity int) int
-		IPBlockType func(childComplexity int, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) int
-	}
-
 	PageInfo struct {
 		EndCursor       func(childComplexity int) int
 		HasNextPage     func(childComplexity int) int
@@ -198,6 +193,11 @@ type ComplexityRoot struct {
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
 	}
 
+	ResourceOwner struct {
+		ID          func(childComplexity int) int
+		IPBlockType func(childComplexity int, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) int
+	}
+
 	_Service struct {
 		SDL func(childComplexity int) int
 	}
@@ -208,7 +208,7 @@ type EntityResolver interface {
 	FindIPAddressableByID(ctx context.Context, id gidx.PrefixedID) (*IPAddressable, error)
 	FindIPBlockByID(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlock, error)
 	FindIPBlockTypeByID(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlockType, error)
-	FindOwnerByID(ctx context.Context, id gidx.PrefixedID) (*Owner, error)
+	FindResourceOwnerByID(ctx context.Context, id gidx.PrefixedID) (*ResourceOwner, error)
 }
 type IPAddressResolver interface {
 	Node(ctx context.Context, obj *generated.IPAddress) (*IPAddressable, error)
@@ -217,7 +217,7 @@ type IPAddressableResolver interface {
 	IPAddresses(ctx context.Context, obj *IPAddressable) ([]*generated.IPAddress, error)
 }
 type IPBlockTypeResolver interface {
-	Owner(ctx context.Context, obj *generated.IPBlockType) (*Owner, error)
+	Owner(ctx context.Context, obj *generated.IPBlockType) (*ResourceOwner, error)
 }
 type MutationResolver interface {
 	CreateIPAddress(ctx context.Context, input generated.CreateIPAddressInput) (*IPAddressCreatePayload, error)
@@ -230,13 +230,13 @@ type MutationResolver interface {
 	UpdateIPBlockType(ctx context.Context, id gidx.PrefixedID, input generated.UpdateIPBlockTypeInput) (*IPBlockTypeUpdatePayload, error)
 	DeleteIPBlockType(ctx context.Context, id gidx.PrefixedID) (*IPBlockTypeDeletePayload, error)
 }
-type OwnerResolver interface {
-	IPBlockType(ctx context.Context, obj *Owner, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) (*generated.IPBlockTypeConnection, error)
-}
 type QueryResolver interface {
 	IPAddress(ctx context.Context, id gidx.PrefixedID) (*generated.IPAddress, error)
 	IPBlock(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlock, error)
 	IPBlockType(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlockType, error)
+}
+type ResourceOwnerResolver interface {
+	IPBlockType(ctx context.Context, obj *ResourceOwner, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) (*generated.IPBlockTypeConnection, error)
 }
 
 type executableSchema struct {
@@ -302,17 +302,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Entity.FindIPBlockTypeByID(childComplexity, args["id"].(gidx.PrefixedID)), true
 
-	case "Entity.findOwnerByID":
-		if e.complexity.Entity.FindOwnerByID == nil {
+	case "Entity.findResourceOwnerByID":
+		if e.complexity.Entity.FindResourceOwnerByID == nil {
 			break
 		}
 
-		args, err := ec.field_Entity_findOwnerByID_args(context.TODO(), rawArgs)
+		args, err := ec.field_Entity_findResourceOwnerByID_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Entity.FindOwnerByID(childComplexity, args["id"].(gidx.PrefixedID)), true
+		return e.complexity.Entity.FindResourceOwnerByID(childComplexity, args["id"].(gidx.PrefixedID)), true
 
 	case "IPAddress.createdAt":
 		if e.complexity.IPAddress.CreatedAt == nil {
@@ -761,25 +761,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateIPBlockType(childComplexity, args["id"].(gidx.PrefixedID), args["input"].(generated.UpdateIPBlockTypeInput)), true
 
-	case "Owner.id":
-		if e.complexity.Owner.ID == nil {
-			break
-		}
-
-		return e.complexity.Owner.ID(childComplexity), true
-
-	case "Owner.ip_block_type":
-		if e.complexity.Owner.IPBlockType == nil {
-			break
-		}
-
-		args, err := ec.field_Owner_ip_block_type_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Owner.IPBlockType(childComplexity, args["after"].(*entgql.Cursor[gidx.PrefixedID]), args["first"].(*int), args["before"].(*entgql.Cursor[gidx.PrefixedID]), args["last"].(*int), args["orderBy"].(*generated.IPBlockTypeOrder), args["where"].(*generated.IPBlockTypeWhereInput)), true
-
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
 			break
@@ -862,6 +843,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.__resolve_entities(childComplexity, args["representations"].([]map[string]interface{})), true
+
+	case "ResourceOwner.id":
+		if e.complexity.ResourceOwner.ID == nil {
+			break
+		}
+
+		return e.complexity.ResourceOwner.ID(childComplexity), true
+
+	case "ResourceOwner.ip_block_type":
+		if e.complexity.ResourceOwner.IPBlockType == nil {
+			break
+		}
+
+		args, err := ec.field_ResourceOwner_ip_block_type_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ResourceOwner.IPBlockType(childComplexity, args["after"].(*entgql.Cursor[gidx.PrefixedID]), args["first"].(*int), args["before"].(*entgql.Cursor[gidx.PrefixedID]), args["last"].(*int), args["orderBy"].(*generated.IPBlockTypeOrder), args["where"].(*generated.IPBlockTypeWhereInput)), true
 
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
@@ -1027,7 +1027,7 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
-type IPAddress implements Node @key(fields: "id") {
+type IPAddress implements Node @key(fields: "id") @prefixedID(prefix: "ipamipa") {
   """The ID of the IP Address."""
   id: ID!
   createdAt: Time!
@@ -1128,7 +1128,7 @@ input IPAddressWhereInput {
   hasIPBlock: Boolean
   hasIPBlockWith: [IPBlockWhereInput!]
 }
-type IPBlock implements Node @key(fields: "id") {
+type IPBlock implements Node @key(fields: "id") @prefixedID(prefix: "ipamibk") {
   """The ID of the IP Block."""
   id: ID!
   createdAt: Time!
@@ -1195,7 +1195,7 @@ enum IPBlockOrderField {
   AUTOSUBNET
   AUTOALLOCATE
 }
-type IPBlockType implements Node @key(fields: "id") {
+type IPBlockType implements Node @key(fields: "id") @prefixedID(prefix: "ipamibt") {
   """The ID of the IP Block Type."""
   id: ID!
   createdAt: Time!
@@ -1675,8 +1675,10 @@ type IPBlockTypeDeletePayload {
     deletedID: ID!
 }
 `, BuiltIn: false},
-	{Name: "../../schema/owner.graphql", Input: `extend type Owner @key(fields: "id") {
-  id: ID! @external
+	{Name: "../../schema/owner.graphql", Input: `directive @prefixedID(prefix: String!) on OBJECT
+
+type ResourceOwner @key(fields: "id") @interfaceObject {
+  id: ID!
   ip_block_type(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -1714,7 +1716,7 @@ extend type IPBlockType {
   """
   The owner of the ip block type.
   """
-  owner: Owner! @goField(forceResolver: true)
+  owner: ResourceOwner! @goField(forceResolver: true)
 }
 `, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
@@ -1755,7 +1757,7 @@ extend type IPBlockType {
 `, BuiltIn: true},
 	{Name: "../../federation/entity.graphql", Input: `
 # a union of all types that use the @key directive
-union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | Owner
+union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | ResourceOwner
 
 # fake type to build resolver interfaces for users to implement
 type Entity {
@@ -1763,7 +1765,7 @@ type Entity {
 	findIPAddressableByID(id: ID!,): IPAddressable!
 	findIPBlockByID(id: ID!,): IPBlock!
 	findIPBlockTypeByID(id: ID!,): IPBlockType!
-	findOwnerByID(id: ID!,): Owner!
+	findResourceOwnerByID(id: ID!,): ResourceOwner!
 
 }
 
@@ -1858,7 +1860,7 @@ func (ec *executionContext) field_Entity_findIPBlockTypeByID_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Entity_findOwnerByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Entity_findResourceOwnerByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 gidx.PrefixedID
@@ -2155,66 +2157,6 @@ func (ec *executionContext) field_Mutation_updateIPBlock_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Owner_ip_block_type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *entgql.Cursor[gidx.PrefixedID]
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["first"] = arg1
-	var arg2 *entgql.Cursor[gidx.PrefixedID]
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg2
-	var arg3 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["last"] = arg3
-	var arg4 *generated.IPBlockTypeOrder
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-		arg4, err = ec.unmarshalOIPBlockTypeOrder2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeOrder(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["orderBy"] = arg4
-	var arg5 *generated.IPBlockTypeWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg5, err = ec.unmarshalOIPBlockTypeWhereInput2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeWhereInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["where"] = arg5
-	return args, nil
-}
-
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2287,6 +2229,66 @@ func (ec *executionContext) field_Query_ip_block_type_args(ctx context.Context, 
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_ResourceOwner_ip_block_type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[gidx.PrefixedID]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[gidx.PrefixedID]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.IPBlockTypeOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOIPBlockTypeOrder2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.IPBlockTypeWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOIPBlockTypeWhereInput2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
 	return args, nil
 }
 
@@ -2602,8 +2604,8 @@ func (ec *executionContext) fieldContext_Entity_findIPBlockTypeByID(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Entity_findOwnerByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entity_findOwnerByID(ctx, field)
+func (ec *executionContext) _Entity_findResourceOwnerByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entity_findResourceOwnerByID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2616,7 +2618,7 @@ func (ec *executionContext) _Entity_findOwnerByID(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Entity().FindOwnerByID(rctx, fc.Args["id"].(gidx.PrefixedID))
+		return ec.resolvers.Entity().FindResourceOwnerByID(rctx, fc.Args["id"].(gidx.PrefixedID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2628,12 +2630,12 @@ func (ec *executionContext) _Entity_findOwnerByID(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*Owner)
+	res := resTmp.(*ResourceOwner)
 	fc.Result = res
-	return ec.marshalNOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐOwner(ctx, field.Selections, res)
+	return ec.marshalNResourceOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐResourceOwner(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Entity_findOwnerByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Entity_findResourceOwnerByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Entity",
 		Field:      field,
@@ -2642,11 +2644,11 @@ func (ec *executionContext) fieldContext_Entity_findOwnerByID(ctx context.Contex
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Owner_id(ctx, field)
+				return ec.fieldContext_ResourceOwner_id(ctx, field)
 			case "ip_block_type":
-				return ec.fieldContext_Owner_ip_block_type(ctx, field)
+				return ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Owner", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ResourceOwner", field.Name)
 		},
 	}
 	defer func() {
@@ -2656,7 +2658,7 @@ func (ec *executionContext) fieldContext_Entity_findOwnerByID(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Entity_findOwnerByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Entity_findResourceOwnerByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -4513,9 +4515,9 @@ func (ec *executionContext) _IPBlockType_owner(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*Owner)
+	res := resTmp.(*ResourceOwner)
 	fc.Result = res
-	return ec.marshalNOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐOwner(ctx, field.Selections, res)
+	return ec.marshalNResourceOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐResourceOwner(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_IPBlockType_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4527,11 +4529,11 @@ func (ec *executionContext) fieldContext_IPBlockType_owner(ctx context.Context, 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Owner_id(ctx, field)
+				return ec.fieldContext_ResourceOwner_id(ctx, field)
 			case "ip_block_type":
-				return ec.fieldContext_Owner_ip_block_type(ctx, field)
+				return ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Owner", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ResourceOwner", field.Name)
 		},
 	}
 	return fc, nil
@@ -5534,113 +5536,6 @@ func (ec *executionContext) fieldContext_Mutation_deleteIPBlockType(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Owner_id(ctx context.Context, field graphql.CollectedField, obj *Owner) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Owner_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gidx.PrefixedID)
-	fc.Result = res
-	return ec.marshalNID2goᚗinfratographerᚗcomᚋxᚋgidxᚐPrefixedID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Owner_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Owner",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Owner_ip_block_type(ctx context.Context, field graphql.CollectedField, obj *Owner) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Owner_ip_block_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Owner().IPBlockType(rctx, obj, fc.Args["after"].(*entgql.Cursor[gidx.PrefixedID]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[gidx.PrefixedID]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.IPBlockTypeOrder), fc.Args["where"].(*generated.IPBlockTypeWhereInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.IPBlockTypeConnection)
-	fc.Result = res
-	return ec.marshalNIPBlockTypeConnection2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Owner_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Owner",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_IPBlockTypeConnection_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_IPBlockTypeConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_IPBlockTypeConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IPBlockTypeConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Owner_ip_block_type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[gidx.PrefixedID]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
@@ -6252,6 +6147,113 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ResourceOwner_id(ctx context.Context, field graphql.CollectedField, obj *ResourceOwner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ResourceOwner_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gidx.PrefixedID)
+	fc.Result = res
+	return ec.marshalNID2goᚗinfratographerᚗcomᚋxᚋgidxᚐPrefixedID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ResourceOwner_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ResourceOwner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ResourceOwner_ip_block_type(ctx context.Context, field graphql.CollectedField, obj *ResourceOwner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ResourceOwner().IPBlockType(rctx, obj, fc.Args["after"].(*entgql.Cursor[gidx.PrefixedID]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[gidx.PrefixedID]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.IPBlockTypeOrder), fc.Args["where"].(*generated.IPBlockTypeWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.IPBlockTypeConnection)
+	fc.Result = res
+	return ec.marshalNIPBlockTypeConnection2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ResourceOwner_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ResourceOwner",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_IPBlockTypeConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_IPBlockTypeConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_IPBlockTypeConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type IPBlockTypeConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_ResourceOwner_ip_block_type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -9813,13 +9815,13 @@ func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, 
 			return graphql.Null
 		}
 		return ec._IPBlockType(ctx, sel, obj)
-	case Owner:
-		return ec._Owner(ctx, sel, &obj)
-	case *Owner:
+	case ResourceOwner:
+		return ec._ResourceOwner(ctx, sel, &obj)
+	case *ResourceOwner:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Owner(ctx, sel, obj)
+		return ec._ResourceOwner(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -9936,7 +9938,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "findOwnerByID":
+		case "findResourceOwnerByID":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9945,7 +9947,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Entity_findOwnerByID(ctx, field)
+				res = ec._Entity_findResourceOwnerByID(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -11166,81 +11168,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
-var ownerImplementors = []string{"Owner", "_Entity"}
-
-func (ec *executionContext) _Owner(ctx context.Context, sel ast.SelectionSet, obj *Owner) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, ownerImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Owner")
-		case "id":
-			out.Values[i] = ec._Owner_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "ip_block_type":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Owner_ip_block_type(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var pageInfoImplementors = []string{"PageInfo"}
 
 func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *entgql.PageInfo[gidx.PrefixedID]) graphql.Marshaler {
@@ -11426,6 +11353,81 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var resourceOwnerImplementors = []string{"ResourceOwner", "_Entity"}
+
+func (ec *executionContext) _ResourceOwner(ctx context.Context, sel ast.SelectionSet, obj *ResourceOwner) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, resourceOwnerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ResourceOwner")
+		case "id":
+			out.Values[i] = ec._ResourceOwner_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "ip_block_type":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ResourceOwner_ip_block_type(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -12218,22 +12220,22 @@ func (ec *executionContext) marshalNOrderDirection2entgoᚗioᚋcontribᚋentgql
 	return v
 }
 
-func (ec *executionContext) marshalNOwner2goᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐOwner(ctx context.Context, sel ast.SelectionSet, v Owner) graphql.Marshaler {
-	return ec._Owner(ctx, sel, &v)
+func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entgql.PageInfo[gidx.PrefixedID]) graphql.Marshaler {
+	return ec._PageInfo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐOwner(ctx context.Context, sel ast.SelectionSet, v *Owner) graphql.Marshaler {
+func (ec *executionContext) marshalNResourceOwner2goᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐResourceOwner(ctx context.Context, sel ast.SelectionSet, v ResourceOwner) graphql.Marshaler {
+	return ec._ResourceOwner(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNResourceOwner2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋgraphapiᚐResourceOwner(ctx context.Context, sel ast.SelectionSet, v *ResourceOwner) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._Owner(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entgql.PageInfo[gidx.PrefixedID]) graphql.Marshaler {
-	return ec._PageInfo(ctx, sel, &v)
+	return ec._ResourceOwner(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

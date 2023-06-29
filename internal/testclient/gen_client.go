@@ -550,8 +550,8 @@ func (c *Client) IPBlockUpdate(ctx context.Context, id gidx.PrefixedID, input Up
 }
 
 const ListIPBlockTypesDocument = `query ListIPBlockTypes ($id: ID!, $orderBy: IPBlockTypeOrder) {
-	_entities(representations: [{__typename:"Owner",id:$id}]) {
-		... on Owner {
+	_entities(representations: [{__typename:"ResourceOwner",id:$id}]) {
+		... on ResourceOwner {
 			ip_block_type(orderBy: $orderBy) {
 				edges {
 					node {

@@ -1,4 +1,16 @@
+directive @composeDirective(name: String!) on SCHEMA
+directive @extends on OBJECT | INTERFACE
+directive @external on OBJECT | FIELD_DEFINITION
+directive @inaccessible on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @interfaceObject on OBJECT
+directive @key(fields: FieldSet!, resolvable: Boolean = true) on OBJECT | INTERFACE
+directive @link(import: [String!], url: String!) on SCHEMA
+directive @override(from: String!) on FIELD_DEFINITION
 directive @prefixedID(prefix: String!) on OBJECT
+directive @provides(fields: FieldSet!) on FIELD_DEFINITION
+directive @requires(fields: FieldSet!) on FIELD_DEFINITION
+directive @shareable on FIELD_DEFINITION | OBJECT
+directive @tag(name: String!) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 """Create a new ip address type node."""
 input CreateIPAddressInput {
 	"""The ip address."""
@@ -37,6 +49,7 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
+scalar FieldSet
 type IPAddress implements Node @key(fields: "id") @prefixedID(prefix: "ipamipa") {
 	"""The ID of the IP Address."""
 	id: ID!
@@ -589,18 +602,3 @@ union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | ResourceOwne
 type _Service {
 	sdl: String
 }
-
-extend schema
-  @link(
-    url: "https://specs.apollo.dev/federation/v2.3"
-    import: [
-			"@key",
-			"@interfaceObject",
-			"@shareable",
-			"@inaccessible",
-			"@override",
-			"@provides",
-			"@requires",
-			"@tag"
-      ]
-  )

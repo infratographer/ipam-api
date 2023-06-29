@@ -38,7 +38,7 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
-type IPAddress implements Node @key(fields: "id") {
+type IPAddress implements Node @key(fields: "id") @prefixedID(prefix: "ipamipa") {
   """The ID of the IP Address."""
   id: ID!
   createdAt: Time!
@@ -139,7 +139,7 @@ input IPAddressWhereInput {
   hasIPBlock: Boolean
   hasIPBlockWith: [IPBlockWhereInput!]
 }
-type IPBlock implements Node @key(fields: "id") {
+type IPBlock implements Node @key(fields: "id") @prefixedID(prefix: "ipamibk") {
   """The ID of the IP Block."""
   id: ID!
   createdAt: Time!
@@ -206,7 +206,7 @@ enum IPBlockOrderField {
   AUTOSUBNET
   AUTOALLOCATE
 }
-type IPBlockType implements Node @key(fields: "id") {
+type IPBlockType implements Node @key(fields: "id") @prefixedID(prefix: "ipamibt") {
   """The ID of the IP Block Type."""
   id: ID!
   createdAt: Time!

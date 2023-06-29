@@ -36,9 +36,9 @@ func (r *entityResolver) FindIPBlockTypeByID(ctx context.Context, id gidx.Prefix
 	return r.client.IPBlockType.Get(ctx, id)
 }
 
-// FindOwnerByID is the resolver for the findOwnerByID field.
-func (r *entityResolver) FindOwnerByID(ctx context.Context, id gidx.PrefixedID) (*Owner, error) {
-	return &Owner{ID: id}, nil
+// FindResourceOwnerByID is the resolver for the findResourceOwnerByID field.
+func (r *entityResolver) FindResourceOwnerByID(ctx context.Context, id gidx.PrefixedID) (*ResourceOwner, error) {
+	return &ResourceOwner{ID: id}, nil
 }
 
 // Entity returns EntityResolver implementation.
