@@ -8,7 +8,7 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.3
 	github.com/3th1nk/cidr v0.2.0
-	github.com/99designs/gqlgen v0.17.32
+	github.com/99designs/gqlgen v0.17.34
 	github.com/Yamashou/gqlgenc v0.13.5
 	github.com/brianvoe/gofakeit/v6 v6.21.0
 	github.com/docker/go-connections v0.4.0
@@ -23,7 +23,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/testcontainers/testcontainers-go v0.20.1
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.20.1
-	github.com/vektah/gqlparser/v2 v2.5.2-0.20230422221642-25e09f9d292d
+	github.com/vektah/gqlparser/v2 v2.5.4
 	github.com/wundergraph/graphql-go-tools v1.63.1
 	go.infratographer.com/x v0.3.2
 	go.uber.org/zap v1.24.0
@@ -78,7 +78,7 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/golang-lru/v2 v2.0.1 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
@@ -99,7 +99,7 @@ require (
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.18 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -151,7 +151,7 @@ require (
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.9.1 // indirect
+	golang.org/x/tools v0.9.3 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/grpc v1.55.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
