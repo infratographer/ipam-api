@@ -15,7 +15,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/lib/pq v1.10.9
-	github.com/mattn/go-sqlite3 v1.14.16
+	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29
 	github.com/spf13/cobra v1.7.0
