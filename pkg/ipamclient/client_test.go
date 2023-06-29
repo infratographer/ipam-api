@@ -163,7 +163,6 @@ func TestGetIPAddressesByNodeID(t *testing.T) {
   "data": {
     "_entities": [
       {
-        "id": "loadbal-randovalue",
         "IPAddresses": [
           {
             "id": "ipamipa-8IPzP37YJ1iTxJdMrCods",
@@ -193,16 +192,16 @@ func TestGetIPAddressesByNodeID(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, ips)
 
-		require.Len(t, ips.IPAddressableEntities.Entities, 1)
-		require.Len(t, ips.IPAddressableEntities.Entities[0].IPAddresses, 2)
+		require.Len(t, ips.Entities, 1)
+		require.Len(t, ips.Entities[0].IPAddresses, 2)
 
-		assert.Equal(t, "ipamipa-8IPzP37YJ1iTxJdMrCods", ips.IPAddressableEntities.Entities[0].IPAddresses[0].ID)
-		assert.Equal(t, "192.168.1.142", ips.IPAddressableEntities.Entities[0].IPAddresses[0].IP)
-		assert.False(t, ips.IPAddressableEntities.Entities[0].IPAddresses[0].Reserved)
+		assert.Equal(t, "ipamipa-8IPzP37YJ1iTxJdMrCods", ips.Entities[0].IPAddresses[0].ID)
+		assert.Equal(t, "192.168.1.142", ips.Entities[0].IPAddresses[0].IP)
+		assert.False(t, ips.Entities[0].IPAddresses[0].Reserved)
 
-		assert.Equal(t, "ipamipa-rPBY83fPw6Ll5sueCMpDr", ips.IPAddressableEntities.Entities[0].IPAddresses[1].ID)
-		assert.Equal(t, "192.168.1.1", ips.IPAddressableEntities.Entities[0].IPAddresses[1].IP)
-		assert.True(t, ips.IPAddressableEntities.Entities[0].IPAddresses[1].Reserved)
+		assert.Equal(t, "ipamipa-rPBY83fPw6Ll5sueCMpDr", ips.Entities[0].IPAddresses[1].ID)
+		assert.Equal(t, "192.168.1.1", ips.Entities[0].IPAddresses[1].IP)
+		assert.True(t, ips.Entities[0].IPAddresses[1].Reserved)
 	})
 }
 

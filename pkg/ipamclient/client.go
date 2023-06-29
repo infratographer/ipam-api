@@ -2,7 +2,6 @@ package ipamclient
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/3th1nk/cidr"
@@ -195,7 +194,7 @@ func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) (*GetIPAddre
 	}
 
 	vars := map[string]interface{}{
-		"representations": fmt.Sprintf(`{"__typename": "IPAddressable", "id": "%s"}`, nodeID),
+		"id": nodeID,
 	}
 
 	var ipas GetIPAddressesByNode

@@ -103,18 +103,12 @@ type DeleteIPAddressResult struct {
 
 // IPAddressableFragment fragment for getting IP Addresses by node
 type IPAddressableFragment struct {
-	IPAddresses []IPAddressNode
-}
-
-// IPAddressableEntities query result for getting IP Addresses by node
-type IPAddressableEntities struct {
-	Entities []struct {
-		ID                    string
-		IPAddressableFragment `graphql:"... on IPAddressable"`
-	} `graphql:"_entities"`
+	IPAddresses []IPAddressNode `graphql:"IPAddresses"`
 }
 
 // GetIPAddressesByNode query for getting IP Addresses by node
 type GetIPAddressesByNode struct {
-	IPAddressableEntities `graphql:"_entities(representations: $representations)"`
+	Entities []struct {
+		IPAddressableFragment `graphql:"... on IPAddressable"`
+	} `graphql:"_entities(representations: {__typename:\"IPAddressable\", id:$id})"`
 }
