@@ -2,6 +2,7 @@ package ipamclient
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/3th1nk/cidr"
@@ -184,4 +185,23 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id string) (*DeleteIPAddre
 	}
 
 	return &ipd, nil
+}
+
+// GetIPAddresses returns a list of IP Addresses by node id
+func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) (*GetIPAddressesByNode, error) {
+	_, err := gidx.Parse(nodeID)
+	if err != nil {
+		return nil, err
+	}
+
+	vars := map[string]interface{}{
+		"representations": fmt.Sprintf(`{"__typename": "IPAddressable", "id": "%s"}`, nodeID),
+	}
+
+	var ipas GetIPAddressesByNode
+	if err := c.gqlCli.Query(ctx, &ipas, vars); err != nil {
+		return nil, err
+	}
+
+	return &ipas, nil
 }

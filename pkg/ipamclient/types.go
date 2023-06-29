@@ -100,3 +100,21 @@ type DeleteIPAddress struct {
 type DeleteIPAddressResult struct {
 	DeletedID string `graphql:"deletedID"`
 }
+
+// IPAddressableFragment fragment for getting IP Addresses by node
+type IPAddressableFragment struct {
+	IPAddresses []IPAddressNode
+}
+
+// IPAddressableEntities query result for getting IP Addresses by node
+type IPAddressableEntities struct {
+	Entities []struct {
+		ID                    string
+		IPAddressableFragment `graphql:"... on IPAddressable"`
+	} `graphql:"_entities"`
+}
+
+// GetIPAddressesByNode query for getting IP Addresses by node
+type GetIPAddressesByNode struct {
+	IPAddressableEntities `graphql:"_entities(representations: $representations)"`
+}
