@@ -42,11 +42,10 @@ type Handler struct {
 	r              *Resolver
 	graphqlHandler http.Handler
 	playground     *playground.Playground
-	middleware     []echo.MiddlewareFunc
 }
 
 // Handler returns an http handler for a graph resolver
-func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFunc) *Handler {
+func (r *Resolver) Handler(withPlayground bool) *Handler {
 	h := &Handler{
 		r: r,
 		graphqlHandler: handler.NewDefaultServer(
@@ -56,7 +55,6 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 				},
 			),
 		),
-		middleware: middleware,
 	}
 
 	if withPlayground {
@@ -77,8 +75,6 @@ func (h *Handler) Handler() http.HandlerFunc {
 
 // Routes ...
 func (h *Handler) Routes(e *echo.Group) {
-	e.Use(h.middleware...)
-
 	e.POST("/"+graphPath, func(c echo.Context) error {
 		h.graphqlHandler.ServeHTTP(c.Response(), c.Request())
 		return nil

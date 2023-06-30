@@ -132,11 +132,6 @@ func serve(ctx context.Context) error {
 		middleware = append(middleware, auth.Middleware())
 	}
 
-	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
-	if err != nil {
-		logger.Error("failed to create server", zap.Error(err))
-	}
-
 	perms, err := permissions.New(config.AppConfig.Permissions,
 		permissions.WithLogger(logger),
 		permissions.WithDefaultChecker(permissions.DefaultAllowChecker),
@@ -147,8 +142,15 @@ func serve(ctx context.Context) error {
 
 	middleware = append(middleware, perms.Middleware())
 
+	config.AppConfig.Server = config.AppConfig.Server.WithMiddleware(middleware...)
+
+	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
+	if err != nil {
+		logger.Error("failed to create server", zap.Error(err))
+	}
+
 	r := graphapi.NewResolver(client, logger.Named("resolvers"))
-	handler := r.Handler(enablePlayground, middleware...)
+	handler := r.Handler(enablePlayground)
 
 	srv.AddHandler(handler)
 
