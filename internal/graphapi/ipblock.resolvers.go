@@ -7,12 +7,18 @@ package graphapi
 import (
 	"context"
 
-	"go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
+
+	"go.infratographer.com/ipam-api/internal/ent/generated"
 )
 
 // CreateIPBlock is the resolver for the createIPBlock field.
 func (r *mutationResolver) CreateIPBlock(ctx context.Context, input generated.CreateIPBlockInput) (*IPBlockCreatePayload, error) {
+	if err := permissions.CheckAccess(ctx, input.IPBlockTypeID, actionIPBlockCreate); err != nil {
+		return nil, err
+	}
+
 	t, err := r.client.IPBlock.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, err
@@ -23,6 +29,10 @@ func (r *mutationResolver) CreateIPBlock(ctx context.Context, input generated.Cr
 
 // UpdateIPBlock is the resolver for the updateIPBlock field.
 func (r *mutationResolver) UpdateIPBlock(ctx context.Context, id gidx.PrefixedID, input generated.UpdateIPBlockInput) (*IPBlockUpdatePayload, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockUpdate); err != nil {
+		return nil, err
+	}
+
 	t, err := r.client.IPBlock.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -38,6 +48,10 @@ func (r *mutationResolver) UpdateIPBlock(ctx context.Context, id gidx.PrefixedID
 
 // DeleteIPBlock is the resolver for the deleteIPBlock field.
 func (r *mutationResolver) DeleteIPBlock(ctx context.Context, id gidx.PrefixedID) (*IPBlockDeletePayload, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockDelete); err != nil {
+		return nil, err
+	}
+
 	if err := r.client.IPBlock.DeleteOneID(id).Exec(ctx); err != nil {
 		return nil, err
 	}
@@ -47,5 +61,9 @@ func (r *mutationResolver) DeleteIPBlock(ctx context.Context, id gidx.PrefixedID
 
 // IPBlock is the resolver for the ip_block field.
 func (r *queryResolver) IPBlock(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlock, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockGet); err != nil {
+		return nil, err
+	}
+
 	return r.client.IPBlock.Get(ctx, id)
 }

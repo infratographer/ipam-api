@@ -56,6 +56,9 @@ api:
     jwks:
       remoteTimeout: 1m
 
+  permissions:
+    url: ""
+
   shutdownGracePeriod: 5s
   trustedProxies: []
   # - "1.2.3.4"

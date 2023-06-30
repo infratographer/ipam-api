@@ -8,9 +8,11 @@ import (
 	"context"
 
 	"entgo.io/contrib/entgql"
+	"go.infratographer.com/permissions-api/pkg/permissions"
+	"go.infratographer.com/x/gidx"
+
 	"go.infratographer.com/ipam-api/internal/ent/generated"
 	"go.infratographer.com/ipam-api/internal/ent/generated/ipblocktype"
-	"go.infratographer.com/x/gidx"
 )
 
 // Owner is the resolver for the owner field.
@@ -20,6 +22,10 @@ func (r *iPBlockTypeResolver) Owner(ctx context.Context, obj *generated.IPBlockT
 
 // IPBlockType is the resolver for the ip_block_type field.
 func (r *resourceOwnerResolver) IPBlockType(ctx context.Context, obj *ResourceOwner, after *entgql.Cursor[gidx.PrefixedID], first *int, before *entgql.Cursor[gidx.PrefixedID], last *int, orderBy *generated.IPBlockTypeOrder, where *generated.IPBlockTypeWhereInput) (*generated.IPBlockTypeConnection, error) {
+	if err := permissions.CheckAccess(ctx, obj.ID, actionIPBlockTypeGet); err != nil {
+		return nil, err
+	}
+
 	return r.client.IPBlockType.Query().
 		Where(
 			ipblocktype.OwnerID(obj.ID),

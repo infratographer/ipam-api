@@ -7,12 +7,18 @@ package graphapi
 import (
 	"context"
 
-	"go.infratographer.com/ipam-api/internal/ent/generated"
+	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
+
+	"go.infratographer.com/ipam-api/internal/ent/generated"
 )
 
 // CreateIPBlockType is the resolver for the createIPBlockType field.
 func (r *mutationResolver) CreateIPBlockType(ctx context.Context, input generated.CreateIPBlockTypeInput) (*IPBlockTypeCreatePayload, error) {
+	if err := permissions.CheckAccess(ctx, input.OwnerID, actionIPBlockTypeCreate); err != nil {
+		return nil, err
+	}
+
 	t, err := r.client.IPBlockType.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, err
@@ -23,6 +29,10 @@ func (r *mutationResolver) CreateIPBlockType(ctx context.Context, input generate
 
 // UpdateIPBlockType is the resolver for the updateIPBlockType field.
 func (r *mutationResolver) UpdateIPBlockType(ctx context.Context, id gidx.PrefixedID, input generated.UpdateIPBlockTypeInput) (*IPBlockTypeUpdatePayload, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockTypeUpdate); err != nil {
+		return nil, err
+	}
+
 	t, err := r.client.IPBlockType.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -38,6 +48,10 @@ func (r *mutationResolver) UpdateIPBlockType(ctx context.Context, id gidx.Prefix
 
 // DeleteIPBlockType is the resolver for the deleteIPBlockType field.
 func (r *mutationResolver) DeleteIPBlockType(ctx context.Context, id gidx.PrefixedID) (*IPBlockTypeDeletePayload, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockTypeDelete); err != nil {
+		return nil, err
+	}
+
 	if err := r.client.IPBlockType.DeleteOneID(id).Exec(ctx); err != nil {
 		return nil, err
 	}
@@ -47,5 +61,9 @@ func (r *mutationResolver) DeleteIPBlockType(ctx context.Context, id gidx.Prefix
 
 // IPBlockType is the resolver for the ip_block_type field.
 func (r *queryResolver) IPBlockType(ctx context.Context, id gidx.PrefixedID) (*generated.IPBlockType, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockTypeGet); err != nil {
+		return nil, err
+	}
+
 	return r.client.IPBlockType.Get(ctx, id)
 }
