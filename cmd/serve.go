@@ -127,9 +127,12 @@ func serve(ctx context.Context) error {
 			logger.Fatal("failed to initialize jwt authentication", zap.Error(err))
 		}
 
-		auth.JWTConfig.Skipper = echox.SkipDefaultEndpoints
-
 		middleware = append(middleware, auth.Middleware())
+	}
+
+	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
+	if err != nil {
+		logger.Error("failed to create server", zap.Error(err))
 	}
 
 	perms, err := permissions.New(config.AppConfig.Permissions,
@@ -142,15 +145,8 @@ func serve(ctx context.Context) error {
 
 	middleware = append(middleware, perms.Middleware())
 
-	config.AppConfig.Server = config.AppConfig.Server.WithMiddleware(middleware...)
-
-	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
-	if err != nil {
-		logger.Error("failed to create server", zap.Error(err))
-	}
-
 	r := graphapi.NewResolver(client, logger.Named("resolvers"))
-	handler := r.Handler(enablePlayground)
+	handler := r.Handler(enablePlayground, middleware...)
 
 	srv.AddHandler(handler)
 
