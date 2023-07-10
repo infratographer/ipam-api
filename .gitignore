@@ -29,3 +29,7 @@ ipam-api
 
 # testing files
 coverage.txt
+
+# devcontainer artifacts
+.devcontainer/nats/resolver.conf
+.devcontainer/nsc

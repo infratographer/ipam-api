@@ -22,8 +22,17 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     uuid-runtime \
     postgresql-client
 
+# Install NATS Tooling
+RUN curl -o /tmp/install.sh  https://raw.githubusercontent.com/nats-io/nsc/main/install.sh \
+    && chmod +x /tmp/install.sh \
+    && /tmp/install.sh -d /usr/local/bin -s - \
+    && rm -f /tmp/install.sh
 
 USER vscode
+ENV NATS_CLI_VERSION=0.0.35
+RUN go install -v github.com/cweill/gotests/gotests@v1.6.0 \
+    && go install github.com/nats-io/natscli/nats@v${NATS_CLI_VERSION} \
+    && go install github.com/nats-io/nkeys/nk@latest
 
 RUN go install ariga.io/atlas/cmd/atlas@latest
 

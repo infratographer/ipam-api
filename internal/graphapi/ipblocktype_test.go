@@ -7,6 +7,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
@@ -16,6 +17,10 @@ import (
 func TestQuery(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
+
 	ownerID := gidx.MustNewID("testown")
 
 	ipbt1 := (&IPBlockTypeBuilder{
@@ -63,6 +68,9 @@ func Test_HappyPath(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
 	ownerID := gidx.MustNewID("testown")
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	t.Run("Create + List + Update + Delete", func(t *testing.T) {
 		ipbt, err := client.IPBlockTypeCreate(ctx, testclient.CreateIPBlockTypeInput{

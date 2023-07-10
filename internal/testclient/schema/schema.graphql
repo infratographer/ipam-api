@@ -1,16 +1,16 @@
-directive @composeDirective(name: String!) on SCHEMA
+directive @composeDirective(name: String!) repeatable on SCHEMA
 directive @extends on OBJECT | INTERFACE
 directive @external on OBJECT | FIELD_DEFINITION
 directive @inaccessible on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 directive @interfaceObject on OBJECT
-directive @key(fields: FieldSet!, resolvable: Boolean = true) on OBJECT | INTERFACE
-directive @link(import: [String!], url: String!) on SCHEMA
+directive @key(fields: FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+directive @link(import: [String!], url: String!) repeatable on SCHEMA
 directive @override(from: String!) on FIELD_DEFINITION
 directive @prefixedID(prefix: String!) on OBJECT
 directive @provides(fields: FieldSet!) on FIELD_DEFINITION
 directive @requires(fields: FieldSet!) on FIELD_DEFINITION
-directive @shareable on FIELD_DEFINITION | OBJECT
-directive @tag(name: String!) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+directive @shareable repeatable on FIELD_DEFINITION | OBJECT
+directive @tag(name: String!) repeatable on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
 """Create a new ip address type node."""
 input CreateIPAddressInput {
 	"""The ip address."""
@@ -598,6 +598,7 @@ input UpdateIPBlockTypeInput {
 	name: String
 }
 scalar _Any
+# a union of all types that use the @key directive
 union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | ResourceOwner
 type _Service {
 	sdl: String

@@ -12,11 +12,15 @@ import (
 
 	"entgo.io/ent/dialect"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"go.uber.org/zap"
 
+	"go.infratographer.com/permissions-api/pkg/permissions"
+	"go.infratographer.com/x/echojwtx"
+	"go.infratographer.com/x/echox"
 	"go.infratographer.com/x/events"
 	"go.infratographer.com/x/goosex"
 	"go.infratographer.com/x/testing/eventtools"
@@ -143,11 +147,39 @@ func errPanic(msg string, err error) {
 	}
 }
 
-func graphTestClient() testclient.TestClient {
-	return testclient.NewClient(&http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
-		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(EntClient, zap.NewNop().Sugar())},
-		))}}, "graph")
+type graphClient struct {
+	srvURL     string
+	httpClient *http.Client
+}
+
+type graphClientOptions func(*graphClient)
+
+func withSrvURL(url string) graphClientOptions {
+	return func(g *graphClient) {
+		g.srvURL = url
+	}
+}
+
+func withHTTPClient(httpcli *http.Client) graphClientOptions {
+	return func(g *graphClient) {
+		g.httpClient = httpcli
+	}
+}
+
+func graphTestClient(options ...graphClientOptions) testclient.TestClient {
+	g := &graphClient{
+		srvURL: "graph",
+		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
+			graphapi.NewExecutableSchema(
+				graphapi.Config{Resolvers: graphapi.NewResolver(EntClient, zap.NewNop().Sugar())},
+			))}},
+	}
+
+	for _, opt := range options {
+		opt(g)
+	}
+
+	return testclient.NewClient(g.httpClient, g.srvURL)
 }
 
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions
@@ -161,6 +193,59 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	l.handler.ServeHTTP(w, req)
 
 	return w.Result(), nil
+}
+
+type testServerConfig struct {
+	echoConfig        echox.Config
+	handlerMiddleware []echo.MiddlewareFunc
+}
+
+type testServerOption func(*testServerConfig) error
+
+func withAuthConfig(authConfig *echojwtx.AuthConfig) testServerOption {
+	return func(tsc *testServerConfig) error {
+		auth, err := echojwtx.NewAuth(context.Background(), *authConfig)
+		if err != nil {
+			return err
+		}
+
+		tsc.echoConfig = tsc.echoConfig.WithMiddleware(auth.Middleware())
+
+		return nil
+	}
+}
+
+func withPermissions(options ...permissions.Option) testServerOption {
+	return func(tsc *testServerConfig) error {
+		perms, err := permissions.New(permissions.Config{}, options...)
+		if err != nil {
+			return err
+		}
+
+		tsc.handlerMiddleware = append(tsc.handlerMiddleware, perms.Middleware())
+
+		return nil
+	}
+}
+
+func newTestServer(options ...testServerOption) (*httptest.Server, error) {
+	tsc := new(testServerConfig)
+
+	for _, opt := range options {
+		if err := opt(tsc); err != nil {
+			return nil, err
+		}
+	}
+
+	srv, err := echox.NewServer(zap.NewNop(), tsc.echoConfig.WithMiddleware(tsc.handlerMiddleware...), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	r := graphapi.NewResolver(EntClient, zap.NewNop().Sugar())
+	srv.AddHandler(r.Handler(false))
+
+	return httptest.NewServer(srv.Handler()), nil
 }
 
 func newString(s string) *string {

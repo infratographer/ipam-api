@@ -7,6 +7,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
@@ -16,6 +17,9 @@ import (
 func TestQuery_IPBlock(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	ipb1 := (&IPBlockBuilder{}).MustNew(ctx)
 
@@ -59,6 +63,9 @@ func TestQuery_IPBlock(t *testing.T) {
 func Test_IPBlock_Lifecycle(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	// Create a new IPBlockType to use for the IPBlock
 	ipbt := (&IPBlockTypeBuilder{OwnerID: gidx.MustNewID(ownerPrefix)}).MustNew(ctx)

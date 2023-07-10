@@ -7,6 +7,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
@@ -16,6 +17,9 @@ import (
 func TestQuery_IPAddress(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	ipa1 := (&IPAddressBuilder{}).MustNew(ctx)
 
@@ -60,6 +64,9 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
 
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
+
 	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
 	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID}).MustNew(ctx)
 
@@ -93,6 +100,9 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 func Test_IPAddressable(t *testing.T) {
 	client := graphTestClient()
 	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	ipas := []gidx.PrefixedID{}
 
