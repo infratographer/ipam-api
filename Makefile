@@ -65,7 +65,7 @@ dev-nats: ## Initializes nats
 	@date --rfc-3339=seconds
 	@.devcontainer/scripts/nats_account.sh
 
-generate: vendor
+generate: vendor ## Generates code
 	@echo --- Generating code...
 	@date --rfc-3339=seconds
 	@go generate ./...
