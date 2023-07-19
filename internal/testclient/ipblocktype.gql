@@ -1,57 +1,57 @@
 query GetIPBlockType($id: ID!) {
-    ip_block_type(id: $id) {
-        id
-        name
-        owner{
-            id
-        }
-        createdAt
-        updatedAt
+  ipBlockType(id: $id) {
+    id
+    name
+    owner {
+      id
     }
+    createdAt
+    updatedAt
+  }
 }
 
-query ListIPBlockTypes($id:ID!, $orderBy: IPBlockTypeOrder){
-    _entities(representations: [{__typename: "ResourceOwner", id: $id}]) {
-        ... on ResourceOwner {
-            ip_block_type(orderBy: $orderBy) {
-                edges {
-                    node {
-                        id
-                        name
-                    }
-                }
-            }
+query ListIPBlockTypes($id: ID!, $orderBy: IPBlockTypeOrder) {
+  _entities(representations: [{ __typename: "ResourceOwner", id: $id }]) {
+    ... on ResourceOwner {
+      ipBlockType(orderBy: $orderBy) {
+        edges {
+          node {
+            id
+            name
+          }
         }
+      }
     }
+  }
 }
 
 mutation IPBlockTypeCreate($input: CreateIPBlockTypeInput!) {
-    createIPBlockType(input: $input) {
-        ip_block_type {
-            id
-            name
-            owner{
-                id
-            }
-            createdAt
-            updatedAt
-        }
+  createIPBlockType(input: $input) {
+    ipBlockType {
+      id
+      name
+      owner {
+        id
+      }
+      createdAt
+      updatedAt
     }
+  }
 }
 
-mutation IPBlockTypeUpdate($id: ID!,$input: UpdateIPBlockTypeInput!) {
-    updateIPBlockType(id: $id input: $input) {
-        ip_block_type {
-            id
-            name
-            createdAt
-            updatedAt
-        }
+mutation IPBlockTypeUpdate($id: ID!, $input: UpdateIPBlockTypeInput!) {
+  updateIPBlockType(id: $id, input: $input) {
+    ipBlockType {
+      id
+      name
+      createdAt
+      updatedAt
     }
+  }
 }
 
-mutation IPBlockTypeDelete($id: ID!){
-    deleteIPBlockType(id: $id){
-        deletedID
-    }
+mutation IPBlockTypeDelete($id: ID!) {
+  deleteIPBlockType(id: $id) {
+    deletedID
+  }
 }

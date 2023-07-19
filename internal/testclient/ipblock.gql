@@ -1,73 +1,72 @@
 query GetIPBlock($id: ID!) {
-  ip_block(id: $id) {
+  ipBlock(id: $id) {
     id
     prefix
     allowAutoSubnet
     allowAutoAllocate
     ipBlockType {
-        id
+      id
     }
     ipAddress {
-        edges {
-            node {
-                id
-                ip
-                reserved
-            }
+      edges {
+        node {
+          id
+          ip
+          reserved
         }
+      }
     }
   }
 }
 
 mutation IPBlockCreate($input: CreateIPBlockInput!) {
-    createIPBlock(input: $input) {
-        ip_block {
+  createIPBlock(input: $input) {
+    ipBlock {
+      id
+      prefix
+      allowAutoSubnet
+      allowAutoAllocate
+      ipBlockType {
+        id
+      }
+      ipAddress {
+        edges {
+          node {
             id
-            prefix
-            allowAutoSubnet
-            allowAutoAllocate
-            ipBlockType {
-                id
-            }
-            ipAddress {
-                edges {
-                    node {
-                        id
-                        ip
-                        reserved
-                    }
-                }
-            }
+            ip
+            reserved
+          }
         }
+      }
     }
-
+  }
 }
 
 mutation IPBlockUpdate($id: ID!, $input: UpdateIPBlockInput!) {
-    updateIPBlock(id: $id, input: $input) {
-        ip_block {
+  updateIPBlock(id: $id, input: $input) {
+    ipBlock {
+      id
+      prefix
+      allowAutoSubnet
+      allowAutoAllocate
+      ipBlockType {
+        id
+      }
+      ipAddress {
+        edges {
+          node {
             id
-            prefix
-            allowAutoSubnet
-            allowAutoAllocate
-            ipBlockType {
-                id
-            }
-            ipAddress {
-                edges {
-                    node {
-                        id
-                        ip
-                        reserved
-                    }
-                }
-            }
+            ip
+            reserved
+          }
         }
+      }
     }
+  }
 }
 
 mutation IPBlockDelete($id: ID!) {
-    deleteIPBlock(id: $id) {
-        deletedID
-    }
+  deleteIPBlock(id: $id) {
+    deletedID
+  }
 }

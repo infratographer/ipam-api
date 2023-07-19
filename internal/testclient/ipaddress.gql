@@ -1,5 +1,5 @@
 query getIPAddress($id: ID!) {
-  ip_address(id: $id) {
+  ipAddress(id: $id) {
     id
     ip
     reserved
@@ -14,7 +14,7 @@ query getIPAddress($id: ID!) {
 
 mutation CreateIPAddress($input: CreateIPAddressInput!) {
   createIPAddress(input: $input) {
-    ip_address {
+    ipAddress {
       id
       ip
       reserved
@@ -35,7 +35,7 @@ mutation CreateIPAddress($input: CreateIPAddressInput!) {
 
 mutation UpdateIPAddress($id: ID!, $input: UpdateIPAddressInput!) {
   updateIPAddress(id: $id, input: $input) {
-    ip_address {
+    ipAddress {
       id
       ip
       reserved

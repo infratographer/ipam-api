@@ -1,75 +1,72 @@
 extend type Query {
+  """
+  Look up ip block type by ID
+  """
+  ipBlock(
     """
-    Look up ip block type by ID
+    ID of the ip block type
     """
-    ip_block(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlock!
+    id: ID!
+  ): IPBlock!
 }
 
-extend type Mutation{
+extend type Mutation {
+  """
+  Create a new ip block type
+  """
+  createIPBlock(
     """
-    Create a new ip block type
+    Name of the ip block type
     """
-    createIPBlock(
-        """
-        Name of the ip block type
-        """
-        input: CreateIPBlockInput!
-    ): IPBlockCreatePayload!
+    input: CreateIPBlockInput!
+  ): IPBlockCreatePayload!
+  """
+  Update an existing ip block type
+  """
+  updateIPBlock(
     """
-    Update an existing ip block type
+    ID of the ip block type
     """
-    updateIPBlock(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-        """
-        Name of the ip block type
-        """
-        input: UpdateIPBlockInput!
-    ): IPBlockUpdatePayload!
+    id: ID!
+    input: UpdateIPBlockInput!
+  ): IPBlockUpdatePayload!
+  """
+  Delete an existing ip block type
+  """
+  deleteIPBlock(
     """
-    Delete an existing ip block type
+    ID of the ip block type
     """
-    deleteIPBlock(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlockDeletePayload!
+    id: ID!
+  ): IPBlockDeletePayload!
 }
 
 """
 Return response for createIPBlock mutation
 """
 type IPBlockCreatePayload {
-    """
-    Created ip block type
-    """
-    ip_block: IPBlock!
+  """
+  Created ip block type
+  """
+  ipBlock: IPBlock!
 }
 
 """
 Return response for updateIPBlock mutation
 """
 type IPBlockUpdatePayload {
-    """
-    Updated ip block type
-    """
-    ip_block: IPBlock!
+  """
+  Updated ip block type
+  """
+  ipBlock: IPBlock!
 }
 
 """
 Return response for deleteIPBlock mutation
 """
 type IPBlockDeletePayload {
-    """
-    Deleted ip block type
-    """
-    deletedID: ID!
+  """
+  Deleted ip block type
+  """
+  deletedID: ID!
 }
