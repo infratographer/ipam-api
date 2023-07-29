@@ -11,7 +11,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     tags:
       - bitnami-common
-    version: 2.2.5
+    version: 2.6.0
   - name: reloader
     condition: reloader.enabled
     version: "1.0.32"
