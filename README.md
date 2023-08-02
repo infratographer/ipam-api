@@ -60,7 +60,7 @@ nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds stream su
 ```
 
 **Interacting with the GraphQL queries:**
-> Go to localhost:7905/playground
+> Go to localhost:7909/playground
 
 ## Example GraphQL Queries
 
