@@ -54,9 +54,9 @@ make go-run
 **To subscribe to the NATS stream:**
 ```sh
 # if not created already
-nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds stream add $NAME --subjects='com.infratographer.>'
+nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds stream add $NAME --subjects='com.example.>'
 
-nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds stream sub --stream=$NAME
+nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds sub --stream=$NAME
 ```
 
 **Interacting with the GraphQL queries:**
