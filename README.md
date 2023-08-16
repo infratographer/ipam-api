@@ -38,6 +38,30 @@ erDiagram
 - [Development Guide](docs/development.md)
 - [Contributing](https://infratographer.com/community/contributing/)
 
+### Getting Started
+
+To begin start by opening the devcontainer as outlined in the [Development Guide](docs/development.md)
+
+**To initialize the database:**
+1. `go build`
+1. `./ipam-api migrate up`
+
+**To run the api**
+```sh
+make go-run
+```
+
+**To subscribe to the NATS stream:**
+```sh
+# if not created already
+nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds stream add $NAME --subjects='com.example.>'
+
+nats --server=nats:4222 --creds=/nsc/nkeys/creds/LOCAL/IPAM/USER.creds sub --stream=$NAME
+```
+
+**Interacting with the GraphQL queries:**
+> Go to localhost:XXXX/playground
+
 ## Example GraphQL Queries
 
 ### Create IP Block Mutation
