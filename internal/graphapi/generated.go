@@ -384,7 +384,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPAddressConnection.TotalCount(childComplexity), true
 
-	case "IPAddressCreatePayload.ip_address":
+	case "IPAddressCreatePayload.ipAddress":
 		if e.complexity.IPAddressCreatePayload.IPAddress == nil {
 			break
 		}
@@ -412,7 +412,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPAddressEdge.Node(childComplexity), true
 
-	case "IPAddressUpdatePayload.ip_address":
+	case "IPAddressUpdatePayload.ipAddress":
 		if e.complexity.IPAddressUpdatePayload.IPAddress == nil {
 			break
 		}
@@ -426,7 +426,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPAddressable.ID(childComplexity), true
 
-	case "IPAddressable.IPAddresses":
+	case "IPAddressable.ipAddresses":
 		if e.complexity.IPAddressable.IPAddresses == nil {
 			break
 		}
@@ -515,7 +515,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPBlockConnection.TotalCount(childComplexity), true
 
-	case "IPBlockCreatePayload.ip_block":
+	case "IPBlockCreatePayload.ipBlock":
 		if e.complexity.IPBlockCreatePayload.IPBlock == nil {
 			break
 		}
@@ -611,7 +611,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPBlockTypeConnection.TotalCount(childComplexity), true
 
-	case "IPBlockTypeCreatePayload.ip_block_type":
+	case "IPBlockTypeCreatePayload.ipBlockType":
 		if e.complexity.IPBlockTypeCreatePayload.IPBlockType == nil {
 			break
 		}
@@ -639,14 +639,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IPBlockTypeEdge.Node(childComplexity), true
 
-	case "IPBlockTypeUpdatePayload.ip_block_type":
+	case "IPBlockTypeUpdatePayload.ipBlockType":
 		if e.complexity.IPBlockTypeUpdatePayload.IPBlockType == nil {
 			break
 		}
 
 		return e.complexity.IPBlockTypeUpdatePayload.IPBlockType(childComplexity), true
 
-	case "IPBlockUpdatePayload.ip_block":
+	case "IPBlockUpdatePayload.ipBlock":
 		if e.complexity.IPBlockUpdatePayload.IPBlock == nil {
 			break
 		}
@@ -789,36 +789,36 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
-	case "Query.ip_address":
+	case "Query.ipAddress":
 		if e.complexity.Query.IPAddress == nil {
 			break
 		}
 
-		args, err := ec.field_Query_ip_address_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_ipAddress_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Query.IPAddress(childComplexity, args["id"].(gidx.PrefixedID)), true
 
-	case "Query.ip_block":
+	case "Query.ipBlock":
 		if e.complexity.Query.IPBlock == nil {
 			break
 		}
 
-		args, err := ec.field_Query_ip_block_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_ipBlock_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Query.IPBlock(childComplexity, args["id"].(gidx.PrefixedID)), true
 
-	case "Query.ip_block_type":
+	case "Query.ipBlockType":
 		if e.complexity.Query.IPBlockType == nil {
 			break
 		}
 
-		args, err := ec.field_Query_ip_block_type_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_ipBlockType_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -851,12 +851,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceOwner.ID(childComplexity), true
 
-	case "ResourceOwner.ip_block_type":
+	case "ResourceOwner.ipBlockType":
 		if e.complexity.ResourceOwner.IPBlockType == nil {
 			break
 		}
 
-		args, err := ec.field_ResourceOwner_ip_block_type_args(context.TODO(), rawArgs)
+		args, err := ec.field_ResourceOwner_ipBlockType_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1425,79 +1425,71 @@ input UpdateIPBlockTypeInput {
 }
 `, BuiltIn: false},
 	{Name: "../../schema/ipaddress.graphql", Input: `extend type Query {
+  """
+  Look up ip block type by ID
+  """
+  ipAddress(
     """
-    Look up ip block type by ID
+    ID of the ip block type
     """
-    ip_address(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPAddress!
+    id: ID!
+  ): IPAddress!
 }
 
-extend type Mutation{
+extend type Mutation {
+  """
+  Create a new ip address
+  """
+  createIPAddress(input: CreateIPAddressInput!): IPAddressCreatePayload!
+  """
+  Update an existing ip block type
+  """
+  updateIPAddress(
     """
-    Create a new ip block type
+    ID of the ip address to update
     """
-    createIPAddress(
-        """
-        Name of the ip block type
-        """
-        input: CreateIPAddressInput!
-    ): IPAddressCreatePayload!
+    id: ID!
+    input: UpdateIPAddressInput!
+  ): IPAddressUpdatePayload!
+  """
+  Delete an existing ip block type
+  """
+  deleteIPAddress(
     """
-    Update an existing ip block type
+    ID of the ip address
     """
-    updateIPAddress(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-        """
-        Name of the ip block type
-        """
-        input: UpdateIPAddressInput!
-    ): IPAddressUpdatePayload!
-    """
-    Delete an existing ip block type
-    """
-    deleteIPAddress(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPAddressDeletePayload!
+    id: ID!
+  ): IPAddressDeletePayload!
 }
 
 """
 Return response for createIPAddress mutation
 """
 type IPAddressCreatePayload {
-    """
-    Created ip block type
-    """
-    ip_address: IPAddress!
+  """
+  Created ip block type
+  """
+  ipAddress: IPAddress!
 }
 
 """
 Return response for updateIPAddress mutation
 """
 type IPAddressUpdatePayload {
-    """
-    Updated ip block type
-    """
-    ip_address: IPAddress!
+  """
+  Updated ip block type
+  """
+  ipAddress: IPAddress!
 }
 
 """
 Return response for deleteIPAddress mutation
 """
 type IPAddressDeletePayload {
-    """
-    Deleted ip block type
-    """
-    deletedID: ID!
+  """
+  Deleted ip block type
+  """
+  deletedID: ID!
 }
 
 extend schema
@@ -1507,179 +1499,177 @@ extend schema
   )
 
 """
-IPAddressable provides an interface for describing IP addresses attached to a node
+IPAddressable provides an interface for determining if a node can have IP addresses attached to it
 """
 type IPAddressable @key(fields: "id") @interfaceObject {
   id: ID!
   """
-  IPAddressable describes IP addresses attached to a node
+  ipAddresses returns all the ip addresses attached to the node
   """
-  IPAddresses: [IPAddress]! @goField(forceResolver: true)
+  ipAddresses: [IPAddress]! @goField(forceResolver: true)
 }
 
 extend type IPAddress {
   """
-  IPAddresses that are associated with a given node
+  node the ip address is attached to
   """
   node: IPAddressable!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../schema/ipblock.graphql", Input: `extend type Query {
+  """
+  Look up ip block type by ID
+  """
+  ipBlock(
     """
-    Look up ip block type by ID
+    ID of the ip block type
     """
-    ip_block(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlock!
+    id: ID!
+  ): IPBlock!
 }
 
-extend type Mutation{
+extend type Mutation {
+  """
+  Create a new ip block type
+  """
+  createIPBlock(
     """
-    Create a new ip block type
+    Name of the ip block type
     """
-    createIPBlock(
-        """
-        Name of the ip block type
-        """
-        input: CreateIPBlockInput!
-    ): IPBlockCreatePayload!
+    input: CreateIPBlockInput!
+  ): IPBlockCreatePayload!
+  """
+  Update an existing ip block type
+  """
+  updateIPBlock(
     """
-    Update an existing ip block type
+    ID of the ip block type
     """
-    updateIPBlock(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-        """
-        Name of the ip block type
-        """
-        input: UpdateIPBlockInput!
-    ): IPBlockUpdatePayload!
+    id: ID!
+    input: UpdateIPBlockInput!
+  ): IPBlockUpdatePayload!
+  """
+  Delete an existing ip block type
+  """
+  deleteIPBlock(
     """
-    Delete an existing ip block type
+    ID of the ip block type
     """
-    deleteIPBlock(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlockDeletePayload!
+    id: ID!
+  ): IPBlockDeletePayload!
 }
 
 """
 Return response for createIPBlock mutation
 """
 type IPBlockCreatePayload {
-    """
-    Created ip block type
-    """
-    ip_block: IPBlock!
+  """
+  Created ip block type
+  """
+  ipBlock: IPBlock!
 }
 
 """
 Return response for updateIPBlock mutation
 """
 type IPBlockUpdatePayload {
-    """
-    Updated ip block type
-    """
-    ip_block: IPBlock!
+  """
+  Updated ip block type
+  """
+  ipBlock: IPBlock!
 }
 
 """
 Return response for deleteIPBlock mutation
 """
 type IPBlockDeletePayload {
-    """
-    Deleted ip block type
-    """
-    deletedID: ID!
+  """
+  Deleted ip block type
+  """
+  deletedID: ID!
 }
 `, BuiltIn: false},
 	{Name: "../../schema/ipblocktype.graphql", Input: `extend type Query {
+  """
+  Look up ip block type by ID
+  """
+  ipBlockType(
     """
-    Look up ip block type by ID
+    ID of the ip block type
     """
-    ip_block_type(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlockType!
+    id: ID!
+  ): IPBlockType!
 }
 
-extend type Mutation{
+extend type Mutation {
+  """
+  Create a new ip block type
+  """
+  createIPBlockType(
     """
-    Create a new ip block type
+    Name of the ip block type
     """
-    createIPBlockType(
-        """
-        Name of the ip block type
-        """
-        input: CreateIPBlockTypeInput!
-    ): IPBlockTypeCreatePayload!
+    input: CreateIPBlockTypeInput!
+  ): IPBlockTypeCreatePayload!
+  """
+  Update an existing ip block type
+  """
+  updateIPBlockType(
     """
-    Update an existing ip block type
+    ID of the ip block type
     """
-    updateIPBlockType(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-        """
-        Name of the ip block type
-        """
-        input: UpdateIPBlockTypeInput!
-    ): IPBlockTypeUpdatePayload!
+    id: ID!
     """
-    Delete an existing ip block type
+    Name of the ip block type
     """
-    deleteIPBlockType(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPBlockTypeDeletePayload!
+    input: UpdateIPBlockTypeInput!
+  ): IPBlockTypeUpdatePayload!
+  """
+  Delete an existing ip block type
+  """
+  deleteIPBlockType(
+    """
+    ID of the ip block type
+    """
+    id: ID!
+  ): IPBlockTypeDeletePayload!
 }
 
 """
 Return response for createIPBlockType mutation
 """
 type IPBlockTypeCreatePayload {
-    """
-    Created ip block type
-    """
-    ip_block_type: IPBlockType!
+  """
+  Created ip block type
+  """
+  ipBlockType: IPBlockType!
 }
 
 """
 Return response for updateIPBlockType mutation
 """
 type IPBlockTypeUpdatePayload {
-    """
-    Updated ip block type
-    """
-    ip_block_type: IPBlockType!
+  """
+  Updated ip block type
+  """
+  ipBlockType: IPBlockType!
 }
 
 """
 Return response for deleteIPBlockType mutation
 """
 type IPBlockTypeDeletePayload {
-    """
-    Deleted ip block type
-    """
-    deletedID: ID!
+  """
+  Deleted ip block type
+  """
+  deletedID: ID!
 }
 `, BuiltIn: false},
 	{Name: "../../schema/owner.graphql", Input: `directive @prefixedID(prefix: String!) on OBJECT
 
 type ResourceOwner @key(fields: "id") @interfaceObject {
   id: ID!
-  ip_block_type(
+  ipBlockType(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2187,7 +2177,7 @@ func (ec *executionContext) field_Query__entities_args(ctx context.Context, rawA
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_ip_address_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_ipAddress_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 gidx.PrefixedID
@@ -2202,7 +2192,7 @@ func (ec *executionContext) field_Query_ip_address_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_ip_block_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_ipBlockType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 gidx.PrefixedID
@@ -2217,7 +2207,7 @@ func (ec *executionContext) field_Query_ip_block_args(ctx context.Context, rawAr
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_ip_block_type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_ipBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 gidx.PrefixedID
@@ -2232,7 +2222,7 @@ func (ec *executionContext) field_Query_ip_block_type_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_ResourceOwner_ip_block_type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_ResourceOwner_ipBlockType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[gidx.PrefixedID]
@@ -2442,8 +2432,8 @@ func (ec *executionContext) fieldContext_Entity_findIPAddressableByID(ctx contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_IPAddressable_id(ctx, field)
-			case "IPAddresses":
-				return ec.fieldContext_IPAddressable_IPAddresses(ctx, field)
+			case "ipAddresses":
+				return ec.fieldContext_IPAddressable_ipAddresses(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPAddressable", field.Name)
 		},
@@ -2645,8 +2635,8 @@ func (ec *executionContext) fieldContext_Entity_findResourceOwnerByID(ctx contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_ResourceOwner_id(ctx, field)
-			case "ip_block_type":
-				return ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
+			case "ipBlockType":
+				return ec.fieldContext_ResourceOwner_ipBlockType(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ResourceOwner", field.Name)
 		},
@@ -2988,8 +2978,8 @@ func (ec *executionContext) fieldContext_IPAddress_node(ctx context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_IPAddressable_id(ctx, field)
-			case "IPAddresses":
-				return ec.fieldContext_IPAddressable_IPAddresses(ctx, field)
+			case "ipAddresses":
+				return ec.fieldContext_IPAddressable_ipAddresses(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPAddressable", field.Name)
 		},
@@ -3142,8 +3132,8 @@ func (ec *executionContext) fieldContext_IPAddressConnection_totalCount(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _IPAddressCreatePayload_ip_address(ctx context.Context, field graphql.CollectedField, obj *IPAddressCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPAddressCreatePayload_ip_address(ctx, field)
+func (ec *executionContext) _IPAddressCreatePayload_ipAddress(ctx context.Context, field graphql.CollectedField, obj *IPAddressCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPAddressCreatePayload_ipAddress(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3173,7 +3163,7 @@ func (ec *executionContext) _IPAddressCreatePayload_ip_address(ctx context.Conte
 	return ec.marshalNIPAddress2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPAddressCreatePayload_ip_address(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPAddressCreatePayload_ipAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPAddressCreatePayload",
 		Field:      field,
@@ -3347,8 +3337,8 @@ func (ec *executionContext) fieldContext_IPAddressEdge_cursor(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _IPAddressUpdatePayload_ip_address(ctx context.Context, field graphql.CollectedField, obj *IPAddressUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPAddressUpdatePayload_ip_address(ctx, field)
+func (ec *executionContext) _IPAddressUpdatePayload_ipAddress(ctx context.Context, field graphql.CollectedField, obj *IPAddressUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPAddressUpdatePayload_ipAddress(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3378,7 +3368,7 @@ func (ec *executionContext) _IPAddressUpdatePayload_ip_address(ctx context.Conte
 	return ec.marshalNIPAddress2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPAddressUpdatePayload_ip_address(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPAddressUpdatePayload_ipAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPAddressUpdatePayload",
 		Field:      field,
@@ -3451,8 +3441,8 @@ func (ec *executionContext) fieldContext_IPAddressable_id(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _IPAddressable_IPAddresses(ctx context.Context, field graphql.CollectedField, obj *IPAddressable) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPAddressable_IPAddresses(ctx, field)
+func (ec *executionContext) _IPAddressable_ipAddresses(ctx context.Context, field graphql.CollectedField, obj *IPAddressable) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPAddressable_ipAddresses(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3482,7 +3472,7 @@ func (ec *executionContext) _IPAddressable_IPAddresses(ctx context.Context, fiel
 	return ec.marshalNIPAddress2ᚕᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPAddressable_IPAddresses(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPAddressable_ipAddresses(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPAddressable",
 		Field:      field,
@@ -4041,8 +4031,8 @@ func (ec *executionContext) fieldContext_IPBlockConnection_totalCount(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _IPBlockCreatePayload_ip_block(ctx context.Context, field graphql.CollectedField, obj *IPBlockCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPBlockCreatePayload_ip_block(ctx, field)
+func (ec *executionContext) _IPBlockCreatePayload_ipBlock(ctx context.Context, field graphql.CollectedField, obj *IPBlockCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPBlockCreatePayload_ipBlock(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4072,7 +4062,7 @@ func (ec *executionContext) _IPBlockCreatePayload_ip_block(ctx context.Context, 
 	return ec.marshalNIPBlock2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPBlockCreatePayload_ip_block(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPBlockCreatePayload_ipBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPBlockCreatePayload",
 		Field:      field,
@@ -4530,8 +4520,8 @@ func (ec *executionContext) fieldContext_IPBlockType_owner(ctx context.Context, 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_ResourceOwner_id(ctx, field)
-			case "ip_block_type":
-				return ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
+			case "ipBlockType":
+				return ec.fieldContext_ResourceOwner_ipBlockType(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ResourceOwner", field.Name)
 		},
@@ -4684,8 +4674,8 @@ func (ec *executionContext) fieldContext_IPBlockTypeConnection_totalCount(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _IPBlockTypeCreatePayload_ip_block_type(ctx context.Context, field graphql.CollectedField, obj *IPBlockTypeCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPBlockTypeCreatePayload_ip_block_type(ctx, field)
+func (ec *executionContext) _IPBlockTypeCreatePayload_ipBlockType(ctx context.Context, field graphql.CollectedField, obj *IPBlockTypeCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPBlockTypeCreatePayload_ipBlockType(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4715,7 +4705,7 @@ func (ec *executionContext) _IPBlockTypeCreatePayload_ip_block_type(ctx context.
 	return ec.marshalNIPBlockType2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPBlockTypeCreatePayload_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPBlockTypeCreatePayload_ipBlockType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPBlockTypeCreatePayload",
 		Field:      field,
@@ -4885,8 +4875,8 @@ func (ec *executionContext) fieldContext_IPBlockTypeEdge_cursor(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _IPBlockTypeUpdatePayload_ip_block_type(ctx context.Context, field graphql.CollectedField, obj *IPBlockTypeUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPBlockTypeUpdatePayload_ip_block_type(ctx, field)
+func (ec *executionContext) _IPBlockTypeUpdatePayload_ipBlockType(ctx context.Context, field graphql.CollectedField, obj *IPBlockTypeUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPBlockTypeUpdatePayload_ipBlockType(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4916,7 +4906,7 @@ func (ec *executionContext) _IPBlockTypeUpdatePayload_ip_block_type(ctx context.
 	return ec.marshalNIPBlockType2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPBlockTypeUpdatePayload_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPBlockTypeUpdatePayload_ipBlockType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPBlockTypeUpdatePayload",
 		Field:      field,
@@ -4943,8 +4933,8 @@ func (ec *executionContext) fieldContext_IPBlockTypeUpdatePayload_ip_block_type(
 	return fc, nil
 }
 
-func (ec *executionContext) _IPBlockUpdatePayload_ip_block(ctx context.Context, field graphql.CollectedField, obj *IPBlockUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IPBlockUpdatePayload_ip_block(ctx, field)
+func (ec *executionContext) _IPBlockUpdatePayload_ipBlock(ctx context.Context, field graphql.CollectedField, obj *IPBlockUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IPBlockUpdatePayload_ipBlock(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4974,7 +4964,7 @@ func (ec *executionContext) _IPBlockUpdatePayload_ip_block(ctx context.Context, 
 	return ec.marshalNIPBlock2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IPBlockUpdatePayload_ip_block(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IPBlockUpdatePayload_ipBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IPBlockUpdatePayload",
 		Field:      field,
@@ -5044,8 +5034,8 @@ func (ec *executionContext) fieldContext_Mutation_createIPAddress(ctx context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_address":
-				return ec.fieldContext_IPAddressCreatePayload_ip_address(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_IPAddressCreatePayload_ipAddress(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPAddressCreatePayload", field.Name)
 		},
@@ -5103,8 +5093,8 @@ func (ec *executionContext) fieldContext_Mutation_updateIPAddress(ctx context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_address":
-				return ec.fieldContext_IPAddressUpdatePayload_ip_address(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_IPAddressUpdatePayload_ipAddress(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPAddressUpdatePayload", field.Name)
 		},
@@ -5221,8 +5211,8 @@ func (ec *executionContext) fieldContext_Mutation_createIPBlock(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_block":
-				return ec.fieldContext_IPBlockCreatePayload_ip_block(ctx, field)
+			case "ipBlock":
+				return ec.fieldContext_IPBlockCreatePayload_ipBlock(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPBlockCreatePayload", field.Name)
 		},
@@ -5280,8 +5270,8 @@ func (ec *executionContext) fieldContext_Mutation_updateIPBlock(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_block":
-				return ec.fieldContext_IPBlockUpdatePayload_ip_block(ctx, field)
+			case "ipBlock":
+				return ec.fieldContext_IPBlockUpdatePayload_ipBlock(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPBlockUpdatePayload", field.Name)
 		},
@@ -5398,8 +5388,8 @@ func (ec *executionContext) fieldContext_Mutation_createIPBlockType(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_block_type":
-				return ec.fieldContext_IPBlockTypeCreatePayload_ip_block_type(ctx, field)
+			case "ipBlockType":
+				return ec.fieldContext_IPBlockTypeCreatePayload_ipBlockType(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPBlockTypeCreatePayload", field.Name)
 		},
@@ -5457,8 +5447,8 @@ func (ec *executionContext) fieldContext_Mutation_updateIPBlockType(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "ip_block_type":
-				return ec.fieldContext_IPBlockTypeUpdatePayload_ip_block_type(ctx, field)
+			case "ipBlockType":
+				return ec.fieldContext_IPBlockTypeUpdatePayload_ipBlockType(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IPBlockTypeUpdatePayload", field.Name)
 		},
@@ -5706,8 +5696,8 @@ func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_ip_address(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_ip_address(ctx, field)
+func (ec *executionContext) _Query_ipAddress(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_ipAddress(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5737,7 +5727,7 @@ func (ec *executionContext) _Query_ip_address(ctx context.Context, field graphql
 	return ec.marshalNIPAddress2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPAddress(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_ip_address(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_ipAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -5770,15 +5760,15 @@ func (ec *executionContext) fieldContext_Query_ip_address(ctx context.Context, f
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_ip_address_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_ipAddress_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_ip_block(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_ip_block(ctx, field)
+func (ec *executionContext) _Query_ipBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_ipBlock(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5808,7 +5798,7 @@ func (ec *executionContext) _Query_ip_block(ctx context.Context, field graphql.C
 	return ec.marshalNIPBlock2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlock(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_ip_block(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_ipBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -5843,15 +5833,15 @@ func (ec *executionContext) fieldContext_Query_ip_block(ctx context.Context, fie
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_ip_block_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_ipBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_ip_block_type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_ip_block_type(ctx, field)
+func (ec *executionContext) _Query_ipBlockType(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_ipBlockType(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5881,7 +5871,7 @@ func (ec *executionContext) _Query_ip_block_type(ctx context.Context, field grap
 	return ec.marshalNIPBlockType2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_ipBlockType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -5912,7 +5902,7 @@ func (ec *executionContext) fieldContext_Query_ip_block_type(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_ip_block_type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_ipBlockType_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6195,8 +6185,8 @@ func (ec *executionContext) fieldContext_ResourceOwner_id(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _ResourceOwner_ip_block_type(ctx context.Context, field graphql.CollectedField, obj *ResourceOwner) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ResourceOwner_ip_block_type(ctx, field)
+func (ec *executionContext) _ResourceOwner_ipBlockType(ctx context.Context, field graphql.CollectedField, obj *ResourceOwner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ResourceOwner_ipBlockType(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -6226,7 +6216,7 @@ func (ec *executionContext) _ResourceOwner_ip_block_type(ctx context.Context, fi
 	return ec.marshalNIPBlockTypeConnection2ᚖgoᚗinfratographerᚗcomᚋipamᚑapiᚋinternalᚋentᚋgeneratedᚐIPBlockTypeConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ResourceOwner_ip_block_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ResourceOwner_ipBlockType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ResourceOwner",
 		Field:      field,
@@ -6251,7 +6241,7 @@ func (ec *executionContext) fieldContext_ResourceOwner_ip_block_type(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_ResourceOwner_ip_block_type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_ResourceOwner_ipBlockType_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -10171,8 +10161,8 @@ func (ec *executionContext) _IPAddressCreatePayload(ctx context.Context, sel ast
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPAddressCreatePayload")
-		case "ip_address":
-			out.Values[i] = ec._IPAddressCreatePayload_ip_address(ctx, field, obj)
+		case "ipAddress":
+			out.Values[i] = ec._IPAddressCreatePayload_ipAddress(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -10290,8 +10280,8 @@ func (ec *executionContext) _IPAddressUpdatePayload(ctx context.Context, sel ast
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPAddressUpdatePayload")
-		case "ip_address":
-			out.Values[i] = ec._IPAddressUpdatePayload_ip_address(ctx, field, obj)
+		case "ipAddress":
+			out.Values[i] = ec._IPAddressUpdatePayload_ipAddress(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -10334,7 +10324,7 @@ func (ec *executionContext) _IPAddressable(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "IPAddresses":
+		case "ipAddresses":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -10343,7 +10333,7 @@ func (ec *executionContext) _IPAddressable(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._IPAddressable_IPAddresses(ctx, field, obj)
+				res = ec._IPAddressable_ipAddresses(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10586,8 +10576,8 @@ func (ec *executionContext) _IPBlockCreatePayload(ctx context.Context, sel ast.S
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPBlockCreatePayload")
-		case "ip_block":
-			out.Values[i] = ec._IPBlockCreatePayload_ip_block(ctx, field, obj)
+		case "ipBlock":
+			out.Values[i] = ec._IPBlockCreatePayload_ipBlock(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -10877,8 +10867,8 @@ func (ec *executionContext) _IPBlockTypeCreatePayload(ctx context.Context, sel a
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPBlockTypeCreatePayload")
-		case "ip_block_type":
-			out.Values[i] = ec._IPBlockTypeCreatePayload_ip_block_type(ctx, field, obj)
+		case "ipBlockType":
+			out.Values[i] = ec._IPBlockTypeCreatePayload_ipBlockType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -10996,8 +10986,8 @@ func (ec *executionContext) _IPBlockTypeUpdatePayload(ctx context.Context, sel a
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPBlockTypeUpdatePayload")
-		case "ip_block_type":
-			out.Values[i] = ec._IPBlockTypeUpdatePayload_ip_block_type(ctx, field, obj)
+		case "ipBlockType":
+			out.Values[i] = ec._IPBlockTypeUpdatePayload_ipBlockType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -11035,8 +11025,8 @@ func (ec *executionContext) _IPBlockUpdatePayload(ctx context.Context, sel ast.S
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("IPBlockUpdatePayload")
-		case "ip_block":
-			out.Values[i] = ec._IPBlockUpdatePayload_ip_block(ctx, field, obj)
+		case "ipBlock":
+			out.Values[i] = ec._IPBlockUpdatePayload_ipBlock(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -11235,7 +11225,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "ip_address":
+		case "ipAddress":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -11244,7 +11234,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_ip_address(ctx, field)
+				res = ec._Query_ipAddress(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -11257,7 +11247,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "ip_block":
+		case "ipBlock":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -11266,7 +11256,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_ip_block(ctx, field)
+				res = ec._Query_ipBlock(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -11279,7 +11269,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "ip_block_type":
+		case "ipBlockType":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -11288,7 +11278,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_ip_block_type(ctx, field)
+				res = ec._Query_ipBlockType(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -11392,7 +11382,7 @@ func (ec *executionContext) _ResourceOwner(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "ip_block_type":
+		case "ipBlockType":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -11401,7 +11391,7 @@ func (ec *executionContext) _ResourceOwner(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._ResourceOwner_ip_block_type(ctx, field, obj)
+				res = ec._ResourceOwner_ipBlockType(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

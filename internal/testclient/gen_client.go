@@ -37,9 +37,9 @@ func NewClient(cli *http.Client, baseURL string, options ...client.HTTPRequestOp
 }
 
 type Query struct {
-	IPAddress   IPAddress   "json:\"ip_address\" graphql:\"ip_address\""
-	IPBlock     IPBlock     "json:\"ip_block\" graphql:\"ip_block\""
-	IPBlockType IPBlockType "json:\"ip_block_type\" graphql:\"ip_block_type\""
+	IPAddress   IPAddress   "json:\"ipAddress\" graphql:\"ipAddress\""
+	IPBlock     IPBlock     "json:\"ipBlock\" graphql:\"ipBlock\""
+	IPBlockType IPBlockType "json:\"ipBlockType\" graphql:\"ipBlockType\""
 	Entities    []Entity    "json:\"_entities\" graphql:\"_entities\""
 	Service     Service     "json:\"_service\" graphql:\"_service\""
 }
@@ -71,7 +71,7 @@ type CreateIPAddress struct {
 					} "json:\"edges\" graphql:\"edges\""
 				} "json:\"ipAddress\" graphql:\"ipAddress\""
 			} "json:\"ipBlock\" graphql:\"ipBlock\""
-		} "json:\"ip_address\" graphql:\"ip_address\""
+		} "json:\"ipAddress\" graphql:\"ipAddress\""
 	} "json:\"createIPAddress\" graphql:\"createIPAddress\""
 }
 type DeleteIPAddress struct {
@@ -83,7 +83,7 @@ type GetIPAddressesByNode struct {
 	Entities []*struct {
 		IPAddresses []*struct {
 			IP string "json:\"ip\" graphql:\"ip\""
-		} "json:\"IPAddresses\" graphql:\"IPAddresses\""
+		} "json:\"ipAddresses\" graphql:\"ipAddresses\""
 	} "json:\"_entities\" graphql:\"_entities\""
 }
 type GetIPBlock struct {
@@ -104,7 +104,7 @@ type GetIPBlock struct {
 				} "json:\"node\" graphql:\"node\""
 			} "json:\"edges\" graphql:\"edges\""
 		} "json:\"ipAddress\" graphql:\"ipAddress\""
-	} "json:\"ip_block\" graphql:\"ip_block\""
+	} "json:\"ipBlock\" graphql:\"ipBlock\""
 }
 type GetIPBlockType struct {
 	IPBlockType struct {
@@ -115,7 +115,7 @@ type GetIPBlockType struct {
 		} "json:\"owner\" graphql:\"owner\""
 		CreatedAt time.Time "json:\"createdAt\" graphql:\"createdAt\""
 		UpdatedAt time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	} "json:\"ip_block_type\" graphql:\"ip_block_type\""
+	} "json:\"ipBlockType\" graphql:\"ipBlockType\""
 }
 type IPBlockCreate struct {
 	CreateIPBlock struct {
@@ -136,7 +136,7 @@ type IPBlockCreate struct {
 					} "json:\"node\" graphql:\"node\""
 				} "json:\"edges\" graphql:\"edges\""
 			} "json:\"ipAddress\" graphql:\"ipAddress\""
-		} "json:\"ip_block\" graphql:\"ip_block\""
+		} "json:\"ipBlock\" graphql:\"ipBlock\""
 	} "json:\"createIPBlock\" graphql:\"createIPBlock\""
 }
 type IPBlockDelete struct {
@@ -154,7 +154,7 @@ type IPBlockTypeCreate struct {
 			} "json:\"owner\" graphql:\"owner\""
 			CreatedAt time.Time "json:\"createdAt\" graphql:\"createdAt\""
 			UpdatedAt time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
+		} "json:\"ipBlockType\" graphql:\"ipBlockType\""
 	} "json:\"createIPBlockType\" graphql:\"createIPBlockType\""
 }
 type IPBlockTypeDelete struct {
@@ -169,7 +169,7 @@ type IPBlockTypeUpdate struct {
 			Name      string          "json:\"name\" graphql:\"name\""
 			CreatedAt time.Time       "json:\"createdAt\" graphql:\"createdAt\""
 			UpdatedAt time.Time       "json:\"updatedAt\" graphql:\"updatedAt\""
-		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
+		} "json:\"ipBlockType\" graphql:\"ipBlockType\""
 	} "json:\"updateIPBlockType\" graphql:\"updateIPBlockType\""
 }
 type IPBlockUpdate struct {
@@ -191,7 +191,7 @@ type IPBlockUpdate struct {
 					} "json:\"node\" graphql:\"node\""
 				} "json:\"edges\" graphql:\"edges\""
 			} "json:\"ipAddress\" graphql:\"ipAddress\""
-		} "json:\"ip_block\" graphql:\"ip_block\""
+		} "json:\"ipBlock\" graphql:\"ipBlock\""
 	} "json:\"updateIPBlock\" graphql:\"updateIPBlock\""
 }
 type ListIPBlockTypes struct {
@@ -203,7 +203,7 @@ type ListIPBlockTypes struct {
 					Name string          "json:\"name\" graphql:\"name\""
 				} "json:\"node\" graphql:\"node\""
 			} "json:\"edges\" graphql:\"edges\""
-		} "json:\"ip_block_type\" graphql:\"ip_block_type\""
+		} "json:\"ipBlockType\" graphql:\"ipBlockType\""
 	} "json:\"_entities\" graphql:\"_entities\""
 }
 type UpdateIPAddress struct {
@@ -223,7 +223,7 @@ type UpdateIPAddress struct {
 					} "json:\"edges\" graphql:\"edges\""
 				} "json:\"ipAddress\" graphql:\"ipAddress\""
 			} "json:\"ipBlock\" graphql:\"ipBlock\""
-		} "json:\"ip_address\" graphql:\"ip_address\""
+		} "json:\"ipAddress\" graphql:\"ipAddress\""
 	} "json:\"updateIPAddress\" graphql:\"updateIPAddress\""
 }
 type GetIPAddress struct {
@@ -237,12 +237,12 @@ type GetIPAddress struct {
 			AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
 			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
 		} "json:\"ipBlock\" graphql:\"ipBlock\""
-	} "json:\"ip_address\" graphql:\"ip_address\""
+	} "json:\"ipAddress\" graphql:\"ipAddress\""
 }
 
 const CreateIPAddressDocument = `mutation CreateIPAddress ($input: CreateIPAddressInput!) {
 	createIPAddress(input: $input) {
-		ip_address {
+		ipAddress {
 			id
 			ip
 			reserved
@@ -298,7 +298,7 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id gidx.PrefixedID, httpRe
 const GetIPAddressesByNodeDocument = `query GetIPAddressesByNode ($id: ID!) {
 	_entities(representations: {__typename:"IPAddressable",id:$id}) {
 		... on IPAddressable {
-			IPAddresses {
+			ipAddresses {
 				ip
 			}
 		}
@@ -320,7 +320,7 @@ func (c *Client) GetIPAddressesByNode(ctx context.Context, id gidx.PrefixedID, h
 }
 
 const GetIPBlockDocument = `query GetIPBlock ($id: ID!) {
-	ip_block(id: $id) {
+	ipBlock(id: $id) {
 		id
 		prefix
 		allowAutoSubnet
@@ -355,7 +355,7 @@ func (c *Client) GetIPBlock(ctx context.Context, id gidx.PrefixedID, httpRequest
 }
 
 const GetIPBlockTypeDocument = `query GetIPBlockType ($id: ID!) {
-	ip_block_type(id: $id) {
+	ipBlockType(id: $id) {
 		id
 		name
 		owner {
@@ -382,7 +382,7 @@ func (c *Client) GetIPBlockType(ctx context.Context, id gidx.PrefixedID, httpReq
 
 const IPBlockCreateDocument = `mutation IPBlockCreate ($input: CreateIPBlockInput!) {
 	createIPBlock(input: $input) {
-		ip_block {
+		ipBlock {
 			id
 			prefix
 			allowAutoSubnet
@@ -439,7 +439,7 @@ func (c *Client) IPBlockDelete(ctx context.Context, id gidx.PrefixedID, httpRequ
 
 const IPBlockTypeCreateDocument = `mutation IPBlockTypeCreate ($input: CreateIPBlockTypeInput!) {
 	createIPBlockType(input: $input) {
-		ip_block_type {
+		ipBlockType {
 			id
 			name
 			owner {
@@ -487,7 +487,7 @@ func (c *Client) IPBlockTypeDelete(ctx context.Context, id gidx.PrefixedID, http
 
 const IPBlockTypeUpdateDocument = `mutation IPBlockTypeUpdate ($id: ID!, $input: UpdateIPBlockTypeInput!) {
 	updateIPBlockType(id: $id, input: $input) {
-		ip_block_type {
+		ipBlockType {
 			id
 			name
 			createdAt
@@ -513,7 +513,7 @@ func (c *Client) IPBlockTypeUpdate(ctx context.Context, id gidx.PrefixedID, inpu
 
 const IPBlockUpdateDocument = `mutation IPBlockUpdate ($id: ID!, $input: UpdateIPBlockInput!) {
 	updateIPBlock(id: $id, input: $input) {
-		ip_block {
+		ipBlock {
 			id
 			prefix
 			allowAutoSubnet
@@ -552,7 +552,7 @@ func (c *Client) IPBlockUpdate(ctx context.Context, id gidx.PrefixedID, input Up
 const ListIPBlockTypesDocument = `query ListIPBlockTypes ($id: ID!, $orderBy: IPBlockTypeOrder) {
 	_entities(representations: [{__typename:"ResourceOwner",id:$id}]) {
 		... on ResourceOwner {
-			ip_block_type(orderBy: $orderBy) {
+			ipBlockType(orderBy: $orderBy) {
 				edges {
 					node {
 						id
@@ -581,7 +581,7 @@ func (c *Client) ListIPBlockTypes(ctx context.Context, id gidx.PrefixedID, order
 
 const UpdateIPAddressDocument = `mutation UpdateIPAddress ($id: ID!, $input: UpdateIPAddressInput!) {
 	updateIPAddress(id: $id, input: $input) {
-		ip_address {
+		ipAddress {
 			id
 			ip
 			reserved
@@ -616,7 +616,7 @@ func (c *Client) UpdateIPAddress(ctx context.Context, id gidx.PrefixedID, input 
 }
 
 const GetIPAddressDocument = `query getIPAddress ($id: ID!) {
-	ip_address(id: $id) {
+	ipAddress(id: $id) {
 		id
 		ip
 		reserved

@@ -1,77 +1,69 @@
 extend type Query {
+  """
+  Look up ip block type by ID
+  """
+  ipAddress(
     """
-    Look up ip block type by ID
+    ID of the ip block type
     """
-    ip_address(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPAddress!
+    id: ID!
+  ): IPAddress!
 }
 
-extend type Mutation{
+extend type Mutation {
+  """
+  Create a new ip address
+  """
+  createIPAddress(input: CreateIPAddressInput!): IPAddressCreatePayload!
+  """
+  Update an existing ip block type
+  """
+  updateIPAddress(
     """
-    Create a new ip block type
+    ID of the ip address to update
     """
-    createIPAddress(
-        """
-        Name of the ip block type
-        """
-        input: CreateIPAddressInput!
-    ): IPAddressCreatePayload!
+    id: ID!
+    input: UpdateIPAddressInput!
+  ): IPAddressUpdatePayload!
+  """
+  Delete an existing ip block type
+  """
+  deleteIPAddress(
     """
-    Update an existing ip block type
+    ID of the ip address
     """
-    updateIPAddress(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-        """
-        Name of the ip block type
-        """
-        input: UpdateIPAddressInput!
-    ): IPAddressUpdatePayload!
-    """
-    Delete an existing ip block type
-    """
-    deleteIPAddress(
-        """
-        ID of the ip block type
-        """
-        id: ID!
-    ): IPAddressDeletePayload!
+    id: ID!
+  ): IPAddressDeletePayload!
 }
 
 """
 Return response for createIPAddress mutation
 """
 type IPAddressCreatePayload {
-    """
-    Created ip block type
-    """
-    ip_address: IPAddress!
+  """
+  Created ip block type
+  """
+  ipAddress: IPAddress!
 }
 
 """
 Return response for updateIPAddress mutation
 """
 type IPAddressUpdatePayload {
-    """
-    Updated ip block type
-    """
-    ip_address: IPAddress!
+  """
+  Updated ip block type
+  """
+  ipAddress: IPAddress!
 }
 
 """
 Return response for deleteIPAddress mutation
 """
 type IPAddressDeletePayload {
-    """
-    Deleted ip block type
-    """
-    deletedID: ID!
+  """
+  Deleted ip block type
+  """
+  deletedID: ID!
 }
 
 extend schema
@@ -81,19 +73,19 @@ extend schema
   )
 
 """
-IPAddressable provides an interface for describing IP addresses attached to a node
+IPAddressable provides an interface for determining if a node can have IP addresses attached to it
 """
 type IPAddressable @key(fields: "id") @interfaceObject {
   id: ID!
   """
-  IPAddressable describes IP addresses attached to a node
+  ipAddresses returns all the ip addresses attached to the node
   """
-  IPAddresses: [IPAddress]! @goField(forceResolver: true)
+  ipAddresses: [IPAddress]! @goField(forceResolver: true)
 }
 
 extend type IPAddress {
   """
-  IPAddresses that are associated with a given node
+  node the ip address is attached to
   """
   node: IPAddressable!
 }
