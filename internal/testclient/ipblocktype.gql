@@ -1,5 +1,5 @@
 query GetIPBlockType($id: ID!) {
-    ip_block_type(id: $id) {
+    ipBlockType(id: $id) {
         id
         name
         owner{
@@ -13,7 +13,7 @@ query GetIPBlockType($id: ID!) {
 query ListIPBlockTypes($id:ID!, $orderBy: IPBlockTypeOrder){
     _entities(representations: [{__typename: "ResourceOwner", id: $id}]) {
         ... on ResourceOwner {
-            ip_block_type(orderBy: $orderBy) {
+            ipBlockType(orderBy: $orderBy) {
                 edges {
                     node {
                         id
@@ -27,7 +27,7 @@ query ListIPBlockTypes($id:ID!, $orderBy: IPBlockTypeOrder){
 
 mutation IPBlockTypeCreate($input: CreateIPBlockTypeInput!) {
     createIPBlockType(input: $input) {
-        ip_block_type {
+        ipBlockType {
             id
             name
             owner{
@@ -41,7 +41,7 @@ mutation IPBlockTypeCreate($input: CreateIPBlockTypeInput!) {
 
 mutation IPBlockTypeUpdate($id: ID!,$input: UpdateIPBlockTypeInput!) {
     updateIPBlockType(id: $id input: $input) {
-        ip_block_type {
+        ipBlockType {
             id
             name
             createdAt

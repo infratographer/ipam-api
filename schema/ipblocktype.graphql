@@ -2,7 +2,7 @@ extend type Query {
     """
     Look up ip block type by ID
     """
-    ip_block_type(
+    ipBlockType(
         """
         ID of the ip block type
         """
@@ -51,7 +51,7 @@ type IPBlockTypeCreatePayload {
     """
     Created ip block type
     """
-    ip_block_type: IPBlockType!
+    ipBlockType: IPBlockType!
 }
 
 """
@@ -61,7 +61,7 @@ type IPBlockTypeUpdatePayload {
     """
     Updated ip block type
     """
-    ip_block_type: IPBlockType!
+    ipBlockType: IPBlockType!
 }
 
 """

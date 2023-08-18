@@ -2,7 +2,7 @@ directive @prefixedID(prefix: String!) on OBJECT
 
 type ResourceOwner @key(fields: "id") @interfaceObject {
   id: ID!
-  ip_block_type(
+  ipBlockType(
     """
     Returns the elements in the list that come after the specified cursor.
     """

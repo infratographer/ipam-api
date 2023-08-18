@@ -1,10 +1,10 @@
 extend type Query {
     """
-    Look up ip block type by ID
+    Look up ip address by ID
     """
-    ip_address(
+    ipAddress(
         """
-        ID of the ip block type
+        ID of the ip address
         """
         id: ID!
     ): IPAddress!
@@ -12,33 +12,33 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new ip block type
+    Create a new ip address
     """
     createIPAddress(
         """
-        Name of the ip block type
+        values of the ip address
         """
         input: CreateIPAddressInput!
     ): IPAddressCreatePayload!
     """
-    Update an existing ip block type
+    Update an existing ip address
     """
     updateIPAddress(
         """
-        ID of the ip block type
+        ID of the ip address
         """
         id: ID!
         """
-        Name of the ip block type
+        New values for the ip address
         """
         input: UpdateIPAddressInput!
     ): IPAddressUpdatePayload!
     """
-    Delete an existing ip block type
+    Delete an existing ip address
     """
     deleteIPAddress(
         """
-        ID of the ip block type
+        ID of the ip address
         """
         id: ID!
     ): IPAddressDeletePayload!
@@ -49,9 +49,9 @@ Return response for createIPAddress mutation
 """
 type IPAddressCreatePayload {
     """
-    Created ip block type
+    Created ip address
     """
-    ip_address: IPAddress!
+    ipAddress: IPAddress!
 }
 
 """
@@ -59,9 +59,9 @@ Return response for updateIPAddress mutation
 """
 type IPAddressUpdatePayload {
     """
-    Updated ip block type
+    Updated ip address
     """
-    ip_address: IPAddress!
+    ipAddress: IPAddress!
 }
 
 """
@@ -69,7 +69,7 @@ Return response for deleteIPAddress mutation
 """
 type IPAddressDeletePayload {
     """
-    Deleted ip block type
+    Deleted ip address ID
     """
     deletedID: ID!
 }

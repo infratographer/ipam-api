@@ -1,10 +1,10 @@
 extend type Query {
     """
-    Look up ip block type by ID
+    Look up ip block by ID
     """
-    ip_block(
+    ipBlock(
         """
-        ID of the ip block type
+        ID of the ip block
         """
         id: ID!
     ): IPBlock!
@@ -12,33 +12,33 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new ip block type
+    Create a new ip block
     """
     createIPBlock(
         """
-        Name of the ip block type
+        Name of the ip block
         """
         input: CreateIPBlockInput!
     ): IPBlockCreatePayload!
     """
-    Update an existing ip block type
+    Update an existing ip block
     """
     updateIPBlock(
         """
-        ID of the ip block type
+        ID of the ip block
         """
         id: ID!
         """
-        Name of the ip block type
+        Name of the ip block
         """
         input: UpdateIPBlockInput!
     ): IPBlockUpdatePayload!
     """
-    Delete an existing ip block type
+    Delete an existing ip block
     """
     deleteIPBlock(
         """
-        ID of the ip block type
+        ID of the ip block
         """
         id: ID!
     ): IPBlockDeletePayload!
@@ -49,9 +49,9 @@ Return response for createIPBlock mutation
 """
 type IPBlockCreatePayload {
     """
-    Created ip block type
+    Created ip block
     """
-    ip_block: IPBlock!
+    ipBlock: IPBlock!
 }
 
 """
@@ -59,9 +59,9 @@ Return response for updateIPBlock mutation
 """
 type IPBlockUpdatePayload {
     """
-    Updated ip block type
+    Updated ip block
     """
-    ip_block: IPBlock!
+    ipBlock: IPBlock!
 }
 
 """
@@ -69,7 +69,7 @@ Return response for deleteIPBlock mutation
 """
 type IPBlockDeletePayload {
     """
-    Deleted ip block type
+    Deleted ip block
     """
     deletedID: ID!
 }

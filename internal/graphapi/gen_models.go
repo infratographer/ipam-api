@@ -9,20 +9,20 @@ import (
 
 // Return response for createIPAddress mutation
 type IPAddressCreatePayload struct {
-	// Created ip block type
-	IPAddress *generated.IPAddress `json:"ip_address"`
+	// Created ip address
+	IPAddress *generated.IPAddress `json:"ipAddress"`
 }
 
 // Return response for deleteIPAddress mutation
 type IPAddressDeletePayload struct {
-	// Deleted ip block type
+	// Deleted ip address ID
 	DeletedID gidx.PrefixedID `json:"deletedID"`
 }
 
 // Return response for updateIPAddress mutation
 type IPAddressUpdatePayload struct {
-	// Updated ip block type
-	IPAddress *generated.IPAddress `json:"ip_address"`
+	// Updated ip address
+	IPAddress *generated.IPAddress `json:"ipAddress"`
 }
 
 // IPAddressable provides an interface for describing IP addresses attached to a node
@@ -36,20 +36,20 @@ func (IPAddressable) IsEntity() {}
 
 // Return response for createIPBlock mutation
 type IPBlockCreatePayload struct {
-	// Created ip block type
-	IPBlock *generated.IPBlock `json:"ip_block"`
+	// Created ip block
+	IPBlock *generated.IPBlock `json:"ipBlock"`
 }
 
 // Return response for deleteIPBlock mutation
 type IPBlockDeletePayload struct {
-	// Deleted ip block type
+	// Deleted ip block
 	DeletedID gidx.PrefixedID `json:"deletedID"`
 }
 
 // Return response for createIPBlockType mutation
 type IPBlockTypeCreatePayload struct {
 	// Created ip block type
-	IPBlockType *generated.IPBlockType `json:"ip_block_type"`
+	IPBlockType *generated.IPBlockType `json:"ipBlockType"`
 }
 
 // Return response for deleteIPBlockType mutation
@@ -61,18 +61,18 @@ type IPBlockTypeDeletePayload struct {
 // Return response for updateIPBlockType mutation
 type IPBlockTypeUpdatePayload struct {
 	// Updated ip block type
-	IPBlockType *generated.IPBlockType `json:"ip_block_type"`
+	IPBlockType *generated.IPBlockType `json:"ipBlockType"`
 }
 
 // Return response for updateIPBlock mutation
 type IPBlockUpdatePayload struct {
-	// Updated ip block type
-	IPBlock *generated.IPBlock `json:"ip_block"`
+	// Updated ip block
+	IPBlock *generated.IPBlock `json:"ipBlock"`
 }
 
 type ResourceOwner struct {
 	ID          gidx.PrefixedID                  `json:"id"`
-	IPBlockType *generated.IPBlockTypeConnection `json:"ip_block_type"`
+	IPBlockType *generated.IPBlockTypeConnection `json:"ipBlockType"`
 }
 
 func (ResourceOwner) IsEntity() {}
