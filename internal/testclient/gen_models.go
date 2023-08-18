@@ -92,13 +92,13 @@ type IPAddressConnection struct {
 
 // Return response for createIPAddress mutation
 type IPAddressCreatePayload struct {
-	// Created ip block type
-	IPAddress IPAddress `json:"ip_address"`
+	// Created ip address
+	IPAddress IPAddress `json:"ipAddress"`
 }
 
 // Return response for deleteIPAddress mutation
 type IPAddressDeletePayload struct {
-	// Deleted ip block type
+	// Deleted ip address ID
 	DeletedID gidx.PrefixedID `json:"deletedID"`
 }
 
@@ -120,8 +120,8 @@ type IPAddressOrder struct {
 
 // Return response for updateIPAddress mutation
 type IPAddressUpdatePayload struct {
-	// Updated ip block type
-	IPAddress IPAddress `json:"ip_address"`
+	// Updated ip address
+	IPAddress IPAddress `json:"ipAddress"`
 }
 
 // IPAddressWhereInput is used for filtering IPAddress objects.
@@ -222,13 +222,13 @@ type IPBlockConnection struct {
 
 // Return response for createIPBlock mutation
 type IPBlockCreatePayload struct {
-	// Created ip block type
-	IPBlock IPBlock `json:"ip_block"`
+	// Created ip block
+	IPBlock IPBlock `json:"ipBlock"`
 }
 
 // Return response for deleteIPBlock mutation
 type IPBlockDeletePayload struct {
-	// Deleted ip block type
+	// Deleted ip block
 	DeletedID gidx.PrefixedID `json:"deletedID"`
 }
 
@@ -280,7 +280,7 @@ type IPBlockTypeConnection struct {
 // Return response for createIPBlockType mutation
 type IPBlockTypeCreatePayload struct {
 	// Created ip block type
-	IPBlockType IPBlockType `json:"ip_block_type"`
+	IPBlockType IPBlockType `json:"ipBlockType"`
 }
 
 // Return response for deleteIPBlockType mutation
@@ -308,7 +308,7 @@ type IPBlockTypeOrder struct {
 // Return response for updateIPBlockType mutation
 type IPBlockTypeUpdatePayload struct {
 	// Updated ip block type
-	IPBlockType IPBlockType `json:"ip_block_type"`
+	IPBlockType IPBlockType `json:"ipBlockType"`
 }
 
 // IPBlockTypeWhereInput is used for filtering IPBlockType objects.
@@ -365,8 +365,8 @@ type IPBlockTypeWhereInput struct {
 
 // Return response for updateIPBlock mutation
 type IPBlockUpdatePayload struct {
-	// Updated ip block type
-	IPBlock IPBlock `json:"ip_block"`
+	// Updated ip block
+	IPBlock IPBlock `json:"ipBlock"`
 }
 
 // IPBlockWhereInput is used for filtering IPBlock objects.
@@ -445,7 +445,7 @@ type PageInfo struct {
 
 type ResourceOwner struct {
 	ID          gidx.PrefixedID       `json:"id"`
-	IPBlockType IPBlockTypeConnection `json:"ip_block_type"`
+	IPBlockType IPBlockTypeConnection `json:"ipBlockType"`
 }
 
 func (ResourceOwner) IsEntity() {}

@@ -61,12 +61,12 @@ type IPAddressConnection {
 }
 """Return response for createIPAddress mutation"""
 type IPAddressCreatePayload {
-	"""Created ip block type"""
-	ip_address: IPAddress!
+	"""Created ip address"""
+	ipAddress: IPAddress!
 }
 """Return response for deleteIPAddress mutation"""
 type IPAddressDeletePayload {
-	"""Deleted ip block type"""
+	"""Deleted ip address ID"""
 	deletedID: ID!
 }
 """An edge in a connection."""
@@ -96,8 +96,8 @@ enum IPAddressOrderField {
 }
 """Return response for updateIPAddress mutation"""
 type IPAddressUpdatePayload {
-	"""Updated ip block type"""
-	ip_address: IPAddress!
+	"""Updated ip address"""
+	ipAddress: IPAddress!
 }
 """
 IPAddressWhereInput is used for filtering IPAddress objects.
@@ -204,12 +204,12 @@ type IPBlockConnection {
 }
 """Return response for createIPBlock mutation"""
 type IPBlockCreatePayload {
-	"""Created ip block type"""
-	ip_block: IPBlock!
+	"""Created ip block"""
+	ipBlock: IPBlock!
 }
 """Return response for deleteIPBlock mutation"""
 type IPBlockDeletePayload {
-	"""Deleted ip block type"""
+	"""Deleted ip block"""
 	deletedID: ID!
 }
 """An edge in a connection."""
@@ -279,7 +279,7 @@ type IPBlockTypeConnection {
 """Return response for createIPBlockType mutation"""
 type IPBlockTypeCreatePayload {
 	"""Created ip block type"""
-	ip_block_type: IPBlockType!
+	ipBlockType: IPBlockType!
 }
 """Return response for deleteIPBlockType mutation"""
 type IPBlockTypeDeletePayload {
@@ -311,7 +311,7 @@ enum IPBlockTypeOrderField {
 """Return response for updateIPBlockType mutation"""
 type IPBlockTypeUpdatePayload {
 	"""Updated ip block type"""
-	ip_block_type: IPBlockType!
+	ipBlockType: IPBlockType!
 }
 """
 IPBlockTypeWhereInput is used for filtering IPBlockType objects.
@@ -368,8 +368,8 @@ input IPBlockTypeWhereInput {
 }
 """Return response for updateIPBlock mutation"""
 type IPBlockUpdatePayload {
-	"""Updated ip block type"""
-	ip_block: IPBlock!
+	"""Updated ip block"""
+	ipBlock: IPBlock!
 }
 """
 IPBlockWhereInput is used for filtering IPBlock objects.
@@ -436,40 +436,40 @@ input IPBlockWhereInput {
 """A valid JSON string."""
 scalar JSON
 type Mutation {
-	"""Create a new ip block type"""
+	"""Create a new ip address"""
 	createIPAddress(
-		"""Name of the ip block type"""
+		"""values of the ip address"""
 		input: CreateIPAddressInput!
 	): IPAddressCreatePayload!
-	"""Update an existing ip block type"""
+	"""Update an existing ip address"""
 	updateIPAddress(
-		"""ID of the ip block type"""
+		"""ID of the ip address"""
 		id: ID!
 
-		"""Name of the ip block type"""
+		"""New values for the ip address"""
 		input: UpdateIPAddressInput!
 	): IPAddressUpdatePayload!
-	"""Delete an existing ip block type"""
+	"""Delete an existing ip address"""
 	deleteIPAddress(
-		"""ID of the ip block type"""
+		"""ID of the ip address"""
 		id: ID!
 	): IPAddressDeletePayload!
-	"""Create a new ip block type"""
+	"""Create a new ip block"""
 	createIPBlock(
-		"""Name of the ip block type"""
+		"""Name of the ip block"""
 		input: CreateIPBlockInput!
 	): IPBlockCreatePayload!
-	"""Update an existing ip block type"""
+	"""Update an existing ip block"""
 	updateIPBlock(
-		"""ID of the ip block type"""
+		"""ID of the ip block"""
 		id: ID!
 
-		"""Name of the ip block type"""
+		"""Name of the ip block"""
 		input: UpdateIPBlockInput!
 	): IPBlockUpdatePayload!
-	"""Delete an existing ip block type"""
+	"""Delete an existing ip block"""
 	deleteIPBlock(
-		"""ID of the ip block type"""
+		"""ID of the ip block"""
 		id: ID!
 	): IPBlockDeletePayload!
 	"""Create a new ip block type"""
@@ -521,18 +521,18 @@ type PageInfo @shareable {
 	endCursor: Cursor
 }
 type Query {
-	"""Look up ip block type by ID"""
-	ip_address(
-		"""ID of the ip block type"""
+	"""Look up ip address by ID"""
+	ipAddress(
+		"""ID of the ip address"""
 		id: ID!
 	): IPAddress!
-	"""Look up ip block type by ID"""
-	ip_block(
-		"""ID of the ip block type"""
+	"""Look up ip block by ID"""
+	ipBlock(
+		"""ID of the ip block"""
 		id: ID!
 	): IPBlock!
 	"""Look up ip block type by ID"""
-	ip_block_type(
+	ipBlockType(
 		"""ID of the ip block type"""
 		id: ID!
 	): IPBlockType!
@@ -541,7 +541,7 @@ type Query {
 }
 type ResourceOwner @key(fields: "id") @interfaceObject {
 	id: ID!
-	ip_block_type(
+	ipBlockType(
 		"""Returns the elements in the list that come after the specified cursor."""
 		after: Cursor
 

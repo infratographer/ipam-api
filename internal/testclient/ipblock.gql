@@ -1,5 +1,5 @@
 query GetIPBlock($id: ID!) {
-  ip_block(id: $id) {
+  ipBlock(id: $id) {
     id
     prefix
     allowAutoSubnet
@@ -21,7 +21,7 @@ query GetIPBlock($id: ID!) {
 
 mutation IPBlockCreate($input: CreateIPBlockInput!) {
     createIPBlock(input: $input) {
-        ip_block {
+        ipBlock {
             id
             prefix
             allowAutoSubnet
@@ -45,7 +45,7 @@ mutation IPBlockCreate($input: CreateIPBlockInput!) {
 
 mutation IPBlockUpdate($id: ID!, $input: UpdateIPBlockInput!) {
     updateIPBlock(id: $id, input: $input) {
-        ip_block {
+        ipBlock {
             id
             prefix
             allowAutoSubnet
