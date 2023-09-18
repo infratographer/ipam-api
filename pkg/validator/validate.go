@@ -1,4 +1,4 @@
-package schema
+package validator
 
 import (
 	"errors"
@@ -6,8 +6,8 @@ import (
 	"net"
 )
 
-// IsValidIPAddress returns error if IP address is NOT valid
-func IsValidIPAddress(ip string) error {
+// CheckIPAddrValid returns error if IP address is NOT valid
+func CheckIPAddrValid(ip string) error {
 	if net.ParseIP(ip) != nil {
 		return nil
 	}

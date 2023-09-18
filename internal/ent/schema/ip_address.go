@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"go.infratographer.com/ipam-api/pkg/validator"
 	"go.infratographer.com/ipam-api/x/pubsubinfo"
 
 	"go.infratographer.com/x/entx"
@@ -44,7 +45,7 @@ func (IPAddress) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("IP"),
 			).
-			Validate(IsValidIPAddress),
+			Validate(validator.CheckIPAddrValid),
 		field.String("block_id").
 			GoType(gidx.PrefixedID("")).
 			Immutable().
