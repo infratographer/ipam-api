@@ -6,8 +6,8 @@ import (
 	"net"
 )
 
-// CheckIPAddrValid returns error if IP address is NOT valid
-func CheckIPAddrValid(ip string) error {
+// IPAddr returns error if IP address is NOT valid
+func IPAddr(ip string) error {
 	if net.ParseIP(ip) != nil {
 		return nil
 	}
