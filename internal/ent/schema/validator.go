@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"errors"
 	"fmt"
 	"net"
 )
@@ -11,5 +12,13 @@ func IsValidIPAddress(ip string) error {
 		return nil
 	}
 
-	return fmt.Errorf("Provided IP Address is invalid: %s", ip)
+	return InvalidIPAddrError(ip)
+}
+
+// ErrInvalidIPAddr is an error raised when provided IP Address is invalid
+var ErrInvalidIPAddr = errors.New("provided IP Address is invalid")
+
+// InvalidIPAddrError returns Error Invalid IP Address
+func InvalidIPAddrError(ip string) error {
+	return fmt.Errorf("error %w: %s", ErrInvalidIPAddr, ip)
 }
