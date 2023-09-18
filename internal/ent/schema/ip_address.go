@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"go.infratographer.com/ipam-api/pkg/validator"
+	"go.infratographer.com/ipam-api/internal/ent/schema/validator"
 	"go.infratographer.com/ipam-api/x/pubsubinfo"
 
 	"go.infratographer.com/x/entx"
