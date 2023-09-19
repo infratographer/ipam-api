@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"go.infratographer.com/ipam-api/internal/ent/schema/validator"
 	"go.infratographer.com/ipam-api/x/pubsubinfo"
 
 	"go.infratographer.com/x/entx"
@@ -43,7 +44,8 @@ func (IPBlock) Fields() []ent.Field {
 			Comment("The prefix of the ip block.").
 			Annotations(
 				entgql.OrderField("PREFIX"),
-			),
+			).
+			Validate(validator.IPBlockPref),
 		field.String("block_type_id").
 			GoType(gidx.PrefixedID("")).
 			Immutable().
