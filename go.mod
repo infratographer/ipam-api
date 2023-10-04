@@ -8,7 +8,7 @@ require (
 	github.com/3th1nk/cidr v0.2.0
 	github.com/99designs/gqlgen v0.17.34
 	github.com/Yamashou/gqlgenc v0.14.0
-	github.com/brianvoe/gofakeit/v6 v6.23.0
+	github.com/brianvoe/gofakeit/v6 v6.23.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/lib/pq v1.10.9
