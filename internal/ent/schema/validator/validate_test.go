@@ -16,7 +16,6 @@ func TestPartOfBlock(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-		errMss  string
 	}{
 		{
 
@@ -32,7 +31,6 @@ func TestPartOfBlock(t *testing.T) {
 				ipBl:   "192.168.1.0/28",
 				ipAdrr: "192.168.1.25"},
 			wantErr: true,
-			errMss:  "error provided IP Address is not part of the IP Block - Prefix: 192.168.1.0/28; IP Address: 192.168.1.25",
 		},
 		{
 			name: "far from block",
@@ -40,7 +38,6 @@ func TestPartOfBlock(t *testing.T) {
 				ipBl:   "108.1.80.128/30",
 				ipAdrr: "192.168.10.12"},
 			wantErr: true,
-			errMss:  "error provided IP Address is not part of the IP Block - Prefix: 108.1.80.128/30; IP Address: 192.168.10.12",
 		},
 	}
 
@@ -49,7 +46,7 @@ func TestPartOfBlock(t *testing.T) {
 			err := PartOfBlock(tt.args.ipBl, tt.args.ipAdrr)
 			if tt.wantErr {
 				assert.Error(t, err)
-				t.Logf("error: %+v", err)
+				assert.ErrorContainsf(t, err, tt.args.ipAdrr, tt.args.ipBl)
 			} else {
 				assert.Nil(t, err)
 			}
