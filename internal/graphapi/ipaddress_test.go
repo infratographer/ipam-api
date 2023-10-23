@@ -68,11 +68,11 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
 
 	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
-	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID}).MustNew(ctx)
+	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID, Prefix: "192.168.1.0/28"}).MustNew(ctx)
 
 	t.Run("Create", func(t *testing.T) {
 		ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
-			IP:          gofakeit.IPv4Address(),
+			IP:          "192.168.1.13",
 			NodeID:      gidx.MustNewID(nodePrefix),
 			NodeOwnerID: gidx.MustNewID(ownerPrefix),
 			Reserved:    newBool(true),
@@ -162,4 +162,66 @@ func Test_IPAddressable(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Len(t, addrs.Entities[0].IPAddresses, 0)
+}
+
+func Test_IPAddress_PartOfBlock_Succeess(t *testing.T) {
+	client := graphTestClient()
+	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
+
+	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
+	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID, Prefix: "192.168.1.0/28"}).MustNew(ctx)
+
+	t.Run("Create", func(t *testing.T) {
+		ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
+			IP:          "192.168.1.13",
+			NodeID:      gidx.MustNewID(nodePrefix),
+			NodeOwnerID: gidx.MustNewID(ownerPrefix),
+			Reserved:    newBool(true),
+			IPBlockID:   ipb.ID,
+		})
+
+		require.NoError(t, err)
+		require.NotNil(t, ipa)
+	})
+}
+
+func Test_IPAddress_PartOfBlock_Failure(t *testing.T) {
+	client := graphTestClient()
+	ctx := context.Background()
+
+	// Permit request
+	ctx = context.WithValue(ctx, permissions.CheckerCtxKey, permissions.DefaultAllowChecker)
+
+	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
+	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID, Prefix: "192.168.1.0/28"}).MustNew(ctx)
+	ipb2 := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID, Prefix: "108.1.80.128/30"}).MustNew(ctx)
+
+	t.Run("Create", func(t *testing.T) {
+		ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
+			IP:          "192.168.1.25",
+			NodeID:      gidx.MustNewID(nodePrefix),
+			NodeOwnerID: gidx.MustNewID(ownerPrefix),
+			Reserved:    newBool(true),
+			IPBlockID:   ipb.ID,
+		})
+
+		require.Error(t, err)
+		require.Nil(t, ipa)
+	})
+
+	t.Run("Create", func(t *testing.T) {
+		ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
+			IP:          "192.168.10.12",
+			NodeID:      gidx.MustNewID(nodePrefix),
+			NodeOwnerID: gidx.MustNewID(ownerPrefix),
+			Reserved:    newBool(true),
+			IPBlockID:   ipb2.ID,
+		})
+
+		require.Error(t, err)
+		require.Nil(t, ipa)
+	})
 }

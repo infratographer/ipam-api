@@ -9,6 +9,7 @@ import (
 
 	"go.infratographer.com/ipam-api/internal/ent/generated"
 	"go.infratographer.com/ipam-api/internal/ent/generated/ipaddress"
+	"go.infratographer.com/ipam-api/internal/ent/schema/validator"
 	"go.infratographer.com/permissions-api/pkg/permissions"
 	"go.infratographer.com/x/gidx"
 )
@@ -34,6 +35,10 @@ func (r *mutationResolver) CreateIPAddress(ctx context.Context, input generated.
 		return nil, err
 	}
 
+	// if err := validator.PartOfBlock(input.IP, input.NodeID.Prefix()); err != nil {
+	// 	return nil, err
+	// }
+
 	t, err := r.client.IPAddress.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, err
@@ -50,6 +55,15 @@ func (r *mutationResolver) UpdateIPAddress(ctx context.Context, id gidx.Prefixed
 
 	t, err := r.client.IPAddress.Get(ctx, id)
 	if err != nil {
+		return nil, err
+	}
+
+	bl, err := r.client.IPBlock.Get(ctx, t.BlockID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := validator.PartOfBlock(t.IP, bl.Prefix); err != nil {
 		return nil, err
 	}
 
