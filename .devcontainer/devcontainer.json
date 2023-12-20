@@ -12,6 +12,7 @@
 					"editor.defaultFormatter": "golang.go"
 				},
 				"go.buildTags": "testtools",
+				"go.formatTool": "goimports",
 				"go.lintTool": "golangci-lint",
 				"gopls": {
 					"formatting.gofumpt": true,
