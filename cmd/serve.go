@@ -65,7 +65,7 @@ func init() {
 	serveCmd.Flags().BoolVar(&enablePlayground, "playground", false, "enable the graph playground")
 	serveCmd.Flags().StringVar(&pidFileName, "pid-file", "", "path to the pid file")
 
-	events.MustViperFlagsForPublisher(viper.GetViper(), serveCmd.Flags(), appName)
+	events.MustViperFlags(viper.GetViper(), serveCmd.Flags(), appName)
 	permissions.MustViperFlags(viper.GetViper(), serveCmd.Flags())
 }
 
@@ -79,7 +79,7 @@ func serve(ctx context.Context) error {
 		logger = loggingx.InitLogger(appName, config.AppConfig.Logging)
 	}
 
-	pub, err := events.NewPublisher(config.AppConfig.Events.Publisher)
+	events, err := events.NewConnection(config.AppConfig.Events, events.WithLogger(logger))
 	if err != nil {
 		logger.Fatalw("failed to create publisher", "error", err)
 	}
@@ -98,7 +98,7 @@ func serve(ctx context.Context) error {
 
 	entDB := entsql.OpenDB(dialect.Postgres, db)
 
-	cOpts := []ent.Option{ent.Driver(entDB), ent.EventsPublisher(pub)}
+	cOpts := []ent.Option{ent.Driver(entDB), ent.EventsPublisher(events)}
 
 	if config.AppConfig.Logging.Debug {
 		cOpts = append(cOpts,
@@ -130,7 +130,7 @@ func serve(ctx context.Context) error {
 		middleware = append(middleware, auth.Middleware())
 	}
 
-	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails())
+	srv, err := echox.NewServer(logger.Desugar(), config.AppConfig.Server, versionx.BuildDetails(), echox.WithLoggingSkipper(echox.SkipDefaultEndpoints))
 	if err != nil {
 		logger.Error("failed to create server", zap.Error(err))
 	}
@@ -138,6 +138,7 @@ func serve(ctx context.Context) error {
 	perms, err := permissions.New(config.AppConfig.Permissions,
 		permissions.WithLogger(logger),
 		permissions.WithDefaultChecker(permissions.DefaultAllowChecker),
+		permissions.WithEventsPublisher(events),
 	)
 	if err != nil {
 		logger.Fatal("failed to initialize permissions", zap.Error(err))

@@ -293,11 +293,15 @@ func (iac *IPAddressCreate) createSpec() (*IPAddress, *sqlgraph.CreateSpec) {
 // IPAddressCreateBulk is the builder for creating many IPAddress entities in bulk.
 type IPAddressCreateBulk struct {
 	config
+	err      error
 	builders []*IPAddressCreate
 }
 
 // Save creates the IPAddress entities in the database.
 func (iacb *IPAddressCreateBulk) Save(ctx context.Context) ([]*IPAddress, error) {
+	if iacb.err != nil {
+		return nil, iacb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(iacb.builders))
 	nodes := make([]*IPAddress, len(iacb.builders))
 	mutators := make([]Mutator, len(iacb.builders))

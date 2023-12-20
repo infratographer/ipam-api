@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"reflect"
 
 	"go.infratographer.com/ipam-api/internal/ent/generated/migrate"
 
@@ -77,7 +78,7 @@ type (
 		hooks *hooks
 		// interceptors to execute on queries.
 		inters          *inters
-		EventsPublisher *events.Publisher
+		EventsPublisher events.Connection
 	}
 	// Option function to configure the client.
 	Option func(*config)
@@ -115,7 +116,7 @@ func Driver(driver dialect.Driver) Option {
 }
 
 // EventsPublisher configures the EventsPublisher.
-func EventsPublisher(v *events.Publisher) Option {
+func EventsPublisher(v events.Connection) Option {
 	return func(c *config) {
 		c.EventsPublisher = v
 	}
@@ -137,11 +138,14 @@ func Open(driverName, dataSourceName string, options ...Option) (*Client, error)
 	}
 }
 
+// ErrTxStarted is returned when trying to start a new transaction from a transactional client.
+var ErrTxStarted = errors.New("generated: cannot start a transaction within a transaction")
+
 // Tx returns a new transactional client. The provided context
 // is used until the transaction is committed or rolled back.
 func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	if _, ok := c.driver.(*txDriver); ok {
-		return nil, errors.New("generated: cannot start a transaction within a transaction")
+		return nil, ErrTxStarted
 	}
 	tx, err := newTx(ctx, c.driver)
 	if err != nil {
@@ -262,6 +266,21 @@ func (c *IPAddressClient) Create() *IPAddressCreate {
 
 // CreateBulk returns a builder for creating a bulk of IPAddress entities.
 func (c *IPAddressClient) CreateBulk(builders ...*IPAddressCreate) *IPAddressCreateBulk {
+	return &IPAddressCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *IPAddressClient) MapCreateBulk(slice any, setFunc func(*IPAddressCreate, int)) *IPAddressCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &IPAddressCreateBulk{err: fmt.Errorf("calling to IPAddressClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*IPAddressCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
 	return &IPAddressCreateBulk{config: c.config, builders: builders}
 }
 
@@ -396,6 +415,21 @@ func (c *IPBlockClient) Create() *IPBlockCreate {
 
 // CreateBulk returns a builder for creating a bulk of IPBlock entities.
 func (c *IPBlockClient) CreateBulk(builders ...*IPBlockCreate) *IPBlockCreateBulk {
+	return &IPBlockCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *IPBlockClient) MapCreateBulk(slice any, setFunc func(*IPBlockCreate, int)) *IPBlockCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &IPBlockCreateBulk{err: fmt.Errorf("calling to IPBlockClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*IPBlockCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
 	return &IPBlockCreateBulk{config: c.config, builders: builders}
 }
 
@@ -546,6 +580,21 @@ func (c *IPBlockTypeClient) Create() *IPBlockTypeCreate {
 
 // CreateBulk returns a builder for creating a bulk of IPBlockType entities.
 func (c *IPBlockTypeClient) CreateBulk(builders ...*IPBlockTypeCreate) *IPBlockTypeCreateBulk {
+	return &IPBlockTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *IPBlockTypeClient) MapCreateBulk(slice any, setFunc func(*IPBlockTypeCreate, int)) *IPBlockTypeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &IPBlockTypeCreateBulk{err: fmt.Errorf("calling to IPBlockTypeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*IPBlockTypeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
 	return &IPBlockTypeCreateBulk{config: c.config, builders: builders}
 }
 

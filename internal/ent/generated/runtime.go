@@ -48,7 +48,21 @@ func init() {
 	// ipaddressDescIP is the schema descriptor for IP field.
 	ipaddressDescIP := ipaddressFields[1].Descriptor()
 	// ipaddress.IPValidator is a validator for the "IP" field. It is called by the builders before save.
-	ipaddress.IPValidator = ipaddressDescIP.Validators[0].(func(string) error)
+	ipaddress.IPValidator = func() func(string) error {
+		validators := ipaddressDescIP.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(_IP string) error {
+			for _, fn := range fns {
+				if err := fn(_IP); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// ipaddressDescReserved is the schema descriptor for reserved field.
 	ipaddressDescReserved := ipaddressFields[5].Descriptor()
 	// ipaddress.DefaultReserved holds the default value on creation for the reserved field.
@@ -75,7 +89,21 @@ func init() {
 	// ipblockDescPrefix is the schema descriptor for prefix field.
 	ipblockDescPrefix := ipblockFields[1].Descriptor()
 	// ipblock.PrefixValidator is a validator for the "prefix" field. It is called by the builders before save.
-	ipblock.PrefixValidator = ipblockDescPrefix.Validators[0].(func(string) error)
+	ipblock.PrefixValidator = func() func(string) error {
+		validators := ipblockDescPrefix.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(prefix string) error {
+			for _, fn := range fns {
+				if err := fn(prefix); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// ipblockDescAllowAutoSubnet is the schema descriptor for allow_auto_subnet field.
 	ipblockDescAllowAutoSubnet := ipblockFields[5].Descriptor()
 	// ipblock.DefaultAllowAutoSubnet holds the default value on creation for the allow_auto_subnet field.

@@ -430,6 +430,7 @@ func (m *IPAddressMutation) SetIPBlockID(id gidx.PrefixedID) {
 // ClearIPBlock clears the "ip_block" edge to the IPBlock entity.
 func (m *IPAddressMutation) ClearIPBlock() {
 	m.clearedip_block = true
+	m.clearedFields[ipaddress.FieldBlockID] = struct{}{}
 }
 
 // IPBlockCleared reports if the "ip_block" edge to the IPBlock entity was cleared.
@@ -1192,6 +1193,7 @@ func (m *IPBlockMutation) SetIPBlockTypeID(id gidx.PrefixedID) {
 // ClearIPBlockType clears the "ip_block_type" edge to the IPBlockType entity.
 func (m *IPBlockMutation) ClearIPBlockType() {
 	m.clearedip_block_type = true
+	m.clearedFields[ipblock.FieldBlockTypeID] = struct{}{}
 }
 
 // IPBlockTypeCleared reports if the "ip_block_type" edge to the IPBlockType entity was cleared.
