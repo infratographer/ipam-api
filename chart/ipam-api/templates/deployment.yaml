@@ -67,6 +67,9 @@ spec:
           {{- end }}
           {{- end }}
           envFrom:
+          {{- if .Values.api.extraEnvFrom }}
+            {{- toYaml .Values.api.extraEnvFrom | nindent 12 }}
+          {{- end }}
             - secretRef:
                 name: {{ .Values.api.db.uriSecret }}
             - configMapRef:
@@ -92,7 +95,7 @@ spec:
               path: /readyz
               port: http
           volumeMounts:
-            {{- if .Values.api.events.auth.secretName  }}
+            {{- if .Values.api.events.nats.credsSecretName }}
             - name: events-creds
               mountPath: /nats
             {{- end }}
@@ -116,10 +119,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if .Values.api.events.auth.secretName  }}
+        {{- if .Values.api.events.nats.credsSecretName  }}
         - name: events-creds
           secret:
-            secretName: "{{ .Values.api.events.auth.secretName }}"
+            secretName: "{{ .Values.api.events.nats.credsSecretName }}"
         {{- end }}
         {{- if .Values.api.db.certSecret }}
         - name: dbcerts

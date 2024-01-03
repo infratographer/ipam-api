@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/infratographer/ipam-api
   pullPolicy: IfNotPresent
-  tag: "v0.0.13"
+  tag: "main-latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -34,16 +34,31 @@ api:
   listenPort: 7608
   extraLabels: {}
   extraAnnotations: {}
+  extraEnvFrom: {}
   extraEnvVars: {}
   resources: {}
   podSecurityContext: {}
   securityContext: {}
   events:
-    connectionURL: "my-events-cluster.example.com:4222"
-    auth:
-      secretName: "events-creds"
-      credsPath: "/nats/creds"
-    topicPrefix: "com.infratographer"
+    nats:
+      # url is the event server connection url
+      url: "nats://my-events-cluster.example.com:4222"
+      # publishPrefix is the subscribe event prefix
+      publishPrefix: "com.infratographer"
+      # queueGroup defines the events queue group
+      queueGroup: ""
+      # source defines the source of the events (defaults to application name)
+      source: ""
+      # connectTimeout is event connection timeout
+      connectTimeout: "10s"
+      # shutdownTimeout is the shutdown grace period
+      shutdownTimeout: "5s"
+      # tokenSecretName is the secret to load the auth token
+      tokenSecretName: ""
+      # credsSecretName is the secret to load the creds auth file from
+      credsSecretName: ""
+      # credsFile is the location to read the creds file from
+      credsFile: "/nats/creds"
   db:
     uriSecret: ipam-api-db-uri
     certSecret: ipam-api-db-ca
@@ -58,12 +73,26 @@ api:
 
   permissions:
     url: ""
+    # ignoreNoResponders whether or not to ignore errors when no AuthRelationship request-reply responders are available
+    ignoreNoResponders: false
 
   shutdownGracePeriod: 5s
   trustedProxies: []
   # - "1.2.3.4"
   # - "1.2.3.4/32"
   # - "1.2.3.0/24"
+  tracing:
+    # enabled is true if OpenTelemetry tracing should be enabled for permissions-api
+    enabled: false
+    # environment is the OpenTelemetry tracing environment to use
+    environment: ""
+    # provider is the OpenTelemetry tracing provider to use
+    provider: stdout
+    otlp:
+      # endpoint is the OpenTelemetry Protocol (OTLP) collector endpoint to send traces to
+      endpoint: ""
+      # insecure is true if TLS should not be required when sending traces
+      insecure: false
 
 reloader:
   enabled: false
