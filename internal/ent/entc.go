@@ -25,8 +25,6 @@ import (
 	"entgo.io/ent/entc/gen"
 	"entgo.io/ent/schema/field"
 	"go.infratographer.com/x/entx"
-
-	"go.infratographer.com/ipam-api/x/pubsubinfo"
 )
 
 func main() {
@@ -35,15 +33,12 @@ func main() {
 
 	xExt, err := entx.NewExtension(
 		entx.WithFederation(),
+		// Disable the default event hooks generation, until the ExtraAdditionalSubjects support is added to x/entx
+		// entx.WithEventHooks(),
 		entx.WithJSONScalar(),
 	)
 	if err != nil {
 		log.Fatalf("creating entx extension: %v", err)
-	}
-
-	pubsubExt, err := pubsubinfo.NewExtension()
-	if err != nil {
-		log.Fatalf("creating pubsubinfo extension: %v", err)
 	}
 
 	gqlExt, err := entgql.NewExtension(
@@ -63,7 +58,6 @@ func main() {
 		entc.Extensions(
 			xExt,
 			gqlExt,
-			pubsubExt,
 		),
 		entc.Dependency(
 			entc.DependencyName("EventsPublisher"),

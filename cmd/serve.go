@@ -25,7 +25,7 @@ import (
 
 	"go.infratographer.com/ipam-api/internal/config"
 	ent "go.infratographer.com/ipam-api/internal/ent/generated"
-	"go.infratographer.com/ipam-api/internal/ent/generated/pubsubhooks"
+	"go.infratographer.com/ipam-api/internal/ent/generated/eventhooks"
 	"go.infratographer.com/ipam-api/internal/graphapi"
 )
 
@@ -81,7 +81,7 @@ func serve(ctx context.Context) error {
 
 	events, err := events.NewConnection(config.AppConfig.Events, events.WithLogger(logger))
 	if err != nil {
-		logger.Fatalw("failed to create publisher", "error", err)
+		logger.Fatalw("failed to create events connection", "error", err)
 	}
 
 	err = otelx.InitTracer(config.AppConfig.Tracing, appName, logger)
@@ -110,7 +110,7 @@ func serve(ctx context.Context) error {
 	client := ent.NewClient(cOpts...)
 	defer client.Close()
 
-	pubsubhooks.PubsubHooks(client)
+	eventhooks.EventHooks(client)
 
 	// Run the automatic migration tool to create all schema resources.
 	if err := client.Schema.Create(ctx); err != nil {
@@ -150,6 +150,10 @@ func serve(ctx context.Context) error {
 	handler := r.Handler(enablePlayground, middleware...)
 
 	srv.AddHandler(handler)
+
+	defer func() {
+		_ = events.Shutdown(ctx)
+	}()
 
 	if err := srv.RunWithContext(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

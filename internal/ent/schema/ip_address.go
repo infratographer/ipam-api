@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"go.infratographer.com/ipam-api/internal/ent/schema/validator"
-	"go.infratographer.com/ipam-api/x/pubsubinfo"
 
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
@@ -55,7 +54,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK"),
-				pubsubinfo.AdditionalSubject(),
+				// pubsubinfo.AdditionalSubject(),
 			),
 		field.String("node_id").
 			GoType(gidx.PrefixedID("")).
@@ -66,7 +65,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("NODE"),
-				pubsubinfo.AdditionalSubject(),
+				// pubsubinfo.AdditionalSubject(),
 			),
 		field.String("node_owner_id").
 			GoType(gidx.PrefixedID("")).
@@ -77,7 +76,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("OWNER"),
-				pubsubinfo.AdditionalSubject(),
+				// pubsubinfo.AdditionalSubject(),
 			),
 		field.Bool("reserved").
 			Default(true).
@@ -110,7 +109,6 @@ func (IPAddress) Indexes() []ent.Index {
 // Annotations of the IPAddress
 func (IPAddress) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip address node on the graph."),
 		prefixIDDirective(IPAddressPrefix),
@@ -119,5 +117,6 @@ func (IPAddress) Annotations() []schema.Annotation {
 			entgql.MutationCreate().Description("Create a new ip address type node."),
 			entgql.MutationUpdate().Description("Update an existing ip address type node."),
 		),
+		entx.EventsHookSubjectName("ipam-ip-address"),
 	}
 }
