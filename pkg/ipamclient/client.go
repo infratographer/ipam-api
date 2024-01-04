@@ -5,15 +5,15 @@ import (
 	"net/http"
 
 	"github.com/3th1nk/cidr"
-	"github.com/shurcooL/graphql"
+	graphql "github.com/hasura/go-graphql-client"
 	"go.infratographer.com/x/gidx"
 	"golang.org/x/exp/slices"
 )
 
 // GQLClient is an interface for a graphql client
 type GQLClient interface {
-	Query(ctx context.Context, q interface{}, variables map[string]interface{}) error
-	Mutate(ctx context.Context, m interface{}, variables map[string]interface{}) error
+	Query(ctx context.Context, q interface{}, variables map[string]interface{}, options ...graphql.Option) error
+	Mutate(ctx context.Context, m interface{}, variables map[string]interface{}, options ...graphql.Option) error
 }
 
 // Client creates a new lb api client against a specific endpoint
@@ -22,11 +22,11 @@ type Client struct {
 	httpClient *http.Client
 }
 
-// ClientOption is a function that modifies a client
-type ClientOption func(*Client)
+// Option is a function that modifies a client
+type Option func(*Client)
 
-// NewClient creates a new lb api client
-func NewClient(url string, opts ...ClientOption) *Client {
+// New creates a new ipam api client
+func New(url string, opts ...Option) *Client {
 	c := &Client{
 		httpClient: http.DefaultClient,
 	}
@@ -41,7 +41,7 @@ func NewClient(url string, opts ...ClientOption) *Client {
 }
 
 // WithHTTPClient functional option to set the http client
-func WithHTTPClient(cli *http.Client) ClientOption {
+func WithHTTPClient(cli *http.Client) Option {
 	return func(c *Client) {
 		c.httpClient = cli
 	}
@@ -55,7 +55,7 @@ func (c *Client) GetIPAddress(ctx context.Context, id string) (*GetIPAddress, er
 	}
 
 	vars := map[string]interface{}{
-		"id": id,
+		"id": graphql.ID(id),
 	}
 
 	var ipa GetIPAddress
@@ -74,7 +74,7 @@ func (c *Client) GetIPBlock(ctx context.Context, id string) (*GetIPBlock, error)
 	}
 
 	vars := map[string]interface{}{
-		"id": id,
+		"id": graphql.ID(id),
 	}
 
 	var ipb GetIPBlock
@@ -128,7 +128,7 @@ func (c *Client) GetNextAvailableAddressFromBlock(ctx context.Context, id string
 }
 
 // CreateIPAddressFromBlock creates an IP Address from the next available address in a given block
-func (c *Client) CreateIPAddressFromBlock(ctx context.Context, blockid string, nodeid string, nodeownerid string, reserve bool) (*CreateIPAddress, error) {
+func (c *Client) CreateIPAddressFromBlock(ctx context.Context, blockid string, nodeid string, nodeownerid string, reserve bool) (*CreateIPAddressResult, error) {
 	_, err := gidx.Parse(blockid)
 	if err != nil {
 		return nil, err
@@ -164,7 +164,7 @@ func (c *Client) CreateIPAddressFromBlock(ctx context.Context, blockid string, n
 		return nil, err
 	}
 
-	return &ipn, err
+	return &ipn.CreateIPAddressResult, err
 }
 
 // DeleteIPAddress deletes an IP Address by id
@@ -175,7 +175,7 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id string) (*DeleteIPAddre
 	}
 
 	vars := map[string]interface{}{
-		"id": id,
+		"id": graphql.ID(id),
 	}
 
 	var ipd DeleteIPAddress
@@ -186,21 +186,21 @@ func (c *Client) DeleteIPAddress(ctx context.Context, id string) (*DeleteIPAddre
 	return &ipd, nil
 }
 
-// GetIPAddresses returns a list of IP Addresses by node id
-func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) (*GetIPAddressesByNode, error) {
+// GetIPAddresses returns a list of loadbalancer IP Addresses from node id
+func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) ([]IPAddressNode, error) {
 	_, err := gidx.Parse(nodeID)
 	if err != nil {
 		return nil, err
 	}
 
 	vars := map[string]interface{}{
-		"id": nodeID,
+		"id": graphql.ID(nodeID),
 	}
 
-	var ipas GetIPAddressesByNode
-	if err := c.gqlCli.Query(ctx, &ipas, vars); err != nil {
+	var nodeIPs GetIPAddressesByNode
+	if err := c.gqlCli.Query(ctx, &nodeIPs, vars); err != nil {
 		return nil, err
 	}
 
-	return &ipas, nil
+	return nodeIPs.NodeIPAddress.LoadBalancerFragment.IPAddresses, nil
 }
