@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -16,7 +16,7 @@ import (
 
 func newGQLClientMock() *mock.GQLClient {
 	mockCli := &mock.GQLClient{}
-	mockCli.DoMutate = func(ctx context.Context, m interface{}, variables map[string]interface{}) error {
+	mockCli.DoMutate = func(ctx context.Context, m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
 		block, ok := m.(*GetIPBlock)
 		if ok {
 			block.IPBlock.ID = "ipamibk-12345"
@@ -42,7 +42,7 @@ func newGQLClientMock() *mock.GQLClient {
 		return nil
 	}
 
-	mockCli.DoQuery = func(ctx context.Context, q interface{}, variables map[string]interface{}) error {
+	mockCli.DoQuery = func(ctx context.Context, q interface{}, variables map[string]interface{}, options ...graphql.Option) error {
 		block, ok := q.(*GetIPBlock)
 		if ok {
 			block.IPBlock.ID = "ipamibk-12345"
@@ -73,7 +73,16 @@ func newGQLClientMock() *mock.GQLClient {
 
 func TestGetIPBlock(t *testing.T) {
 	cli := Client{
-		gqlCli: newGQLClientMock(),
+		gqlCli: mustNewGQLTestClient(`{
+  "data": {
+    "ipBlock": {
+      "allowAutoAllocate": true,
+      "allowAutoSubnet": true,
+      "id": "ipamibk-12345",
+      "prefix": "192.168.10.0/28"
+    }
+  }
+}`),
 	}
 
 	block, err := cli.GetIPBlock(context.TODO(), "ipamibk-12345")
@@ -91,15 +100,25 @@ func TestGetIPBlock(t *testing.T) {
 
 func TestGetIPAddress(t *testing.T) {
 	cli := Client{
-		gqlCli: newGQLClientMock(),
+		gqlCli: mustNewGQLTestClient(
+			`{
+  "data": {
+    "ipAddress": {
+      "id": "ipamipa-12345",
+      "ip": "192.168.10.1",
+	  "reserved": false
+    }
+  }
+}`),
 	}
 
-	address, err := cli.GetIPAddress(context.Background(), "ipamipa-12345")
+	ipResult, err := cli.GetIPAddress(context.Background(), "ipamipa-12345")
 	require.NoError(t, err)
-	require.NotNil(t, address)
+	require.NotNil(t, ipResult)
 
-	assert.Equal(t, address.IPAddress.ID, "ipamipa-12345")
-	assert.Equal(t, address.IPAddress.IP, "192.168.10.1")
+	assert.Equal(t, ipResult.IPAddress.ID, "ipamipa-12345")
+	assert.Equal(t, ipResult.IPAddress.IP, "192.168.10.1")
+	assert.False(t, ipResult.IPAddress.Reserved)
 
 	baddress, err := cli.GetIPAddress(context.TODO(), "badprefix-test")
 	require.Error(t, err)
@@ -108,7 +127,16 @@ func TestGetIPAddress(t *testing.T) {
 
 func TestGetNextAvailableAddressFromBlock(t *testing.T) {
 	cli := Client{
-		gqlCli: newGQLClientMock(),
+		gqlCli: mustNewGQLTestClient(`{
+  "data": {
+    "ipBlock": {
+      "allowAutoAllocate": true,
+      "allowAutoSubnet": true,
+      "id": "ipamibk-12345",
+      "prefix": "192.168.10.0/28"
+    }
+  }
+}`),
 	}
 
 	ip, err := cli.GetNextAvailableAddressFromBlock(context.Background(), "ipamibk-12345")
@@ -127,7 +155,13 @@ func TestGetNextAvailableAddressFromBlock(t *testing.T) {
 
 func TestDeleteIPAddress(t *testing.T) {
 	cli := Client{
-		gqlCli: newGQLClientMock(),
+		gqlCli: mustNewGQLTestClient(`{
+  "data": {
+    "deleteIPAddress": {
+      "deletedID": "ipamipa-12345"
+    }
+  }
+}`),
 	}
 
 	// TODO: build better mock to build more expressive tests
@@ -159,24 +193,24 @@ func TestCreateIPAddressFromBlock(t *testing.T) {
 
 func TestGetIPAddressesByNodeID(t *testing.T) {
 	cli := Client{
-		gqlCli: mustNewGQLTestClient(`{
+		gqlCli: mustNewGQLTestClient(
+			`{
   "data": {
-    "_entities": [
-      {
-        "IPAddresses": [
-          {
-            "id": "ipamipa-8IPzP37YJ1iTxJdMrCods",
-            "ip": "192.168.1.142",
-            "reserved": false
-          },
-          {
-            "id": "ipamipa-rPBY83fPw6Ll5sueCMpDr",
-            "ip": "192.168.1.1",
-            "reserved": true
-          }
-        ]
-      }
-    ]
+    "node": {
+	  "id": "loadbal-randovalue",
+	  "IPAddresses": [
+		{
+	  	  "id": "ipamipa-8IPzP37YJ1iTxJdMrCods",
+		  "ip": "192.168.1.142",
+		  "reserved": false
+		},
+		{
+		  "id": "ipamipa-rPBY83fPw6Ll5sueCMpDr",
+		  "ip": "192.168.1.1",
+		  "reserved": true
+		}
+	  ]
+	}
   }
 }`),
 	}
@@ -190,18 +224,15 @@ func TestGetIPAddressesByNodeID(t *testing.T) {
 	t.Run("retrieves nodeID ip addresses", func(t *testing.T) {
 		ips, err := cli.GetIPAddresses(context.Background(), "loadbal-randovalue")
 		require.NoError(t, err)
-		require.NotNil(t, ips)
+		require.Len(t, ips, 2)
 
-		require.Len(t, ips.Entities, 1)
-		require.Len(t, ips.Entities[0].IPAddresses, 2)
+		assert.Equal(t, "ipamipa-8IPzP37YJ1iTxJdMrCods", ips[0].ID)
+		assert.Equal(t, "192.168.1.142", ips[0].IP)
+		assert.False(t, ips[0].Reserved)
 
-		assert.Equal(t, "ipamipa-8IPzP37YJ1iTxJdMrCods", ips.Entities[0].IPAddresses[0].ID)
-		assert.Equal(t, "192.168.1.142", ips.Entities[0].IPAddresses[0].IP)
-		assert.False(t, ips.Entities[0].IPAddresses[0].Reserved)
-
-		assert.Equal(t, "ipamipa-rPBY83fPw6Ll5sueCMpDr", ips.Entities[0].IPAddresses[1].ID)
-		assert.Equal(t, "192.168.1.1", ips.Entities[0].IPAddresses[1].IP)
-		assert.True(t, ips.Entities[0].IPAddresses[1].Reserved)
+		assert.Equal(t, "ipamipa-rPBY83fPw6Ll5sueCMpDr", ips[1].ID)
+		assert.Equal(t, "192.168.1.1", ips[1].IP)
+		assert.True(t, ips[1].Reserved)
 	})
 }
 
