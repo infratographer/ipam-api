@@ -84,6 +84,10 @@ func serve(ctx context.Context) error {
 		logger.Fatalw("failed to create events connection", "error", err)
 	}
 
+	defer func() {
+		_ = events.Shutdown(ctx)
+	}()
+
 	err = otelx.InitTracer(config.AppConfig.Tracing, appName, logger)
 	if err != nil {
 		logger.Fatalw("failed to initialize tracer", "error", err)
@@ -150,10 +154,6 @@ func serve(ctx context.Context) error {
 	handler := r.Handler(enablePlayground, middleware...)
 
 	srv.AddHandler(handler)
-
-	defer func() {
-		_ = events.Shutdown(ctx)
-	}()
 
 	if err := srv.RunWithContext(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))
