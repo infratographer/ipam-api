@@ -33,8 +33,7 @@ func main() {
 
 	xExt, err := entx.NewExtension(
 		entx.WithFederation(),
-		// Disable the default event hooks generation, until the ExtraAdditionalSubjects support is added to x/entx
-		// entx.WithEventHooks(),
+		entx.WithEventHooks(),
 		entx.WithJSONScalar(),
 	)
 	if err != nil {

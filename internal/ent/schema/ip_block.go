@@ -55,7 +55,6 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK_TYPE"),
 				entx.EventsHookAdditionalSubject("owner"),
-				// pubsubinfo.AdditionalSubject(),
 			),
 		field.String("location_id").
 			GoType(gidx.PrefixedID("")).
@@ -66,7 +65,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("LOCATION"),
-				// pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.String("parent_block_id").
 			GoType(gidx.PrefixedID("")).
@@ -77,7 +76,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("PARENT_BLOCK"),
-				// pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.Bool("allow_auto_subnet").
 			Default(true).

@@ -22,7 +22,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.10
 	github.com/wundergraph/graphql-go-tools v1.67.0
 	go.infratographer.com/permissions-api v0.2.7
-	go.infratographer.com/x v0.3.9
+	go.infratographer.com/x v0.3.10-0.20240129185339-bec1b00bf570
 	go.uber.org/zap v1.26.0
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
 )
@@ -171,3 +171,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.10 // indirect
 )
+
+replace go.infratographer.com/x => github.com/rizzza/x v0.0.0-20240123164547-34778d83c36b

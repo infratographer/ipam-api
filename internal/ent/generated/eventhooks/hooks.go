@@ -112,6 +112,14 @@ func IPAddressHooks() []ent.Hook {
 
 					cv_block_id := ""
 					block_id, ok := m.BlockID()
+					if !ok && !m.Op().Is(ent.OpCreate) {
+						// since we are doing an update or delete and these fields didn't change, load the "old" value
+						block_id, err = m.OldBlockID(ctx)
+						if err != nil {
+							return nil, err
+						}
+					}
+					additionalSubjects = append(additionalSubjects, block_id)
 
 					if ok {
 						cv_block_id = fmt.Sprintf("%s", fmt.Sprint(block_id))
@@ -130,12 +138,18 @@ func IPAddressHooks() []ent.Hook {
 							PreviousValue: pv_block_id,
 							CurrentValue:  cv_block_id,
 						})
-
-						additionalSubjects = append(additionalSubjects, block_id)
 					}
 
 					cv_node_id := ""
 					node_id, ok := m.NodeID()
+					if !ok && !m.Op().Is(ent.OpCreate) {
+						// since we are doing an update or delete and these fields didn't change, load the "old" value
+						node_id, err = m.OldNodeID(ctx)
+						if err != nil {
+							return nil, err
+						}
+					}
+					additionalSubjects = append(additionalSubjects, node_id)
 
 					if ok {
 						cv_node_id = fmt.Sprintf("%s", fmt.Sprint(node_id))
@@ -154,12 +168,18 @@ func IPAddressHooks() []ent.Hook {
 							PreviousValue: pv_node_id,
 							CurrentValue:  cv_node_id,
 						})
-
-						additionalSubjects = append(additionalSubjects, node_id)
 					}
 
 					cv_node_owner_id := ""
 					node_owner_id, ok := m.NodeOwnerID()
+					if !ok && !m.Op().Is(ent.OpCreate) {
+						// since we are doing an update or delete and these fields didn't change, load the "old" value
+						node_owner_id, err = m.OldNodeOwnerID(ctx)
+						if err != nil {
+							return nil, err
+						}
+					}
+					additionalSubjects = append(additionalSubjects, node_owner_id)
 
 					if ok {
 						cv_node_owner_id = fmt.Sprintf("%s", fmt.Sprint(node_owner_id))
@@ -178,8 +198,6 @@ func IPAddressHooks() []ent.Hook {
 							PreviousValue: pv_node_owner_id,
 							CurrentValue:  cv_node_owner_id,
 						})
-
-						additionalSubjects = append(additionalSubjects, node_owner_id)
 					}
 
 					cv_reserved := ""
@@ -218,7 +236,7 @@ func IPAddressHooks() []ent.Hook {
 						return retValue, err
 					}
 
-					if len(relationships) != 0 {
+					if len(relationships) != 0 && m.Op().Is(ent.OpCreate) {
 						if err := permissions.CreateAuthRelationships(ctx, "ipam-ip-address", objID, relationships...); err != nil {
 							return nil, fmt.Errorf("relationship request failed with error: %w", err)
 						}
@@ -252,7 +270,9 @@ func IPAddressHooks() []ent.Hook {
 					}
 
 					additionalSubjects = append(additionalSubjects, dbObj.BlockID)
+
 					additionalSubjects = append(additionalSubjects, dbObj.NodeID)
+
 					additionalSubjects = append(additionalSubjects, dbObj.NodeOwnerID)
 
 					// we have all the info we need, now complete the mutation before we process the event
@@ -376,7 +396,6 @@ func IPBlockHooks() []ent.Hook {
 						}
 					}
 					additionalSubjects = append(additionalSubjects, block_type_id)
-
 					relationships = append(relationships, events.AuthRelationshipRelation{
 						Relation:  "owner",
 						SubjectID: block_type_id,
@@ -403,6 +422,14 @@ func IPBlockHooks() []ent.Hook {
 
 					cv_location_id := ""
 					location_id, ok := m.LocationID()
+					if !ok && !m.Op().Is(ent.OpCreate) {
+						// since we are doing an update or delete and these fields didn't change, load the "old" value
+						location_id, err = m.OldLocationID(ctx)
+						if err != nil {
+							return nil, err
+						}
+					}
+					additionalSubjects = append(additionalSubjects, location_id)
 
 					if ok {
 						cv_location_id = fmt.Sprintf("%s", fmt.Sprint(location_id))
@@ -421,12 +448,18 @@ func IPBlockHooks() []ent.Hook {
 							PreviousValue: pv_location_id,
 							CurrentValue:  cv_location_id,
 						})
-
-						additionalSubjects = append(additionalSubjects, location_id)
 					}
 
 					cv_parent_block_id := ""
 					parent_block_id, ok := m.ParentBlockID()
+					if !ok && !m.Op().Is(ent.OpCreate) {
+						// since we are doing an update or delete and these fields didn't change, load the "old" value
+						parent_block_id, err = m.OldParentBlockID(ctx)
+						if err != nil {
+							return nil, err
+						}
+					}
+					additionalSubjects = append(additionalSubjects, parent_block_id)
 
 					if ok {
 						cv_parent_block_id = fmt.Sprintf("%s", fmt.Sprint(parent_block_id))
@@ -445,8 +478,6 @@ func IPBlockHooks() []ent.Hook {
 							PreviousValue: pv_parent_block_id,
 							CurrentValue:  cv_parent_block_id,
 						})
-
-						additionalSubjects = append(additionalSubjects, parent_block_id)
 					}
 
 					cv_allow_auto_subnet := ""
@@ -507,7 +538,7 @@ func IPBlockHooks() []ent.Hook {
 						return retValue, err
 					}
 
-					if len(relationships) != 0 && eventType(m.Op()) == string(events.CreateChangeType){
+					if len(relationships) != 0 && m.Op().Is(ent.OpCreate) {
 						if err := permissions.CreateAuthRelationships(ctx, "ipam-block", objID, relationships...); err != nil {
 							return nil, fmt.Errorf("relationship request failed with error: %w", err)
 						}
@@ -541,13 +572,14 @@ func IPBlockHooks() []ent.Hook {
 					}
 
 					additionalSubjects = append(additionalSubjects, dbObj.BlockTypeID)
-					additionalSubjects = append(additionalSubjects, dbObj.LocationID)
-					additionalSubjects = append(additionalSubjects, dbObj.ParentBlockID)
-
 					relationships = append(relationships, events.AuthRelationshipRelation{
 						Relation:  "owner",
 						SubjectID: dbObj.BlockTypeID,
 					})
+
+					additionalSubjects = append(additionalSubjects, dbObj.LocationID)
+
+					additionalSubjects = append(additionalSubjects, dbObj.ParentBlockID)
 
 					// we have all the info we need, now complete the mutation before we process the event
 					retValue, err := next.Mutate(ctx, m)
@@ -670,7 +702,6 @@ func IPBlockTypeHooks() []ent.Hook {
 						}
 					}
 					additionalSubjects = append(additionalSubjects, owner_id)
-
 					relationships = append(relationships, events.AuthRelationshipRelation{
 						Relation:  "owner",
 						SubjectID: owner_id,
@@ -709,7 +740,7 @@ func IPBlockTypeHooks() []ent.Hook {
 						return retValue, err
 					}
 
-					if len(relationships) != 0 {
+					if len(relationships) != 0 && m.Op().Is(ent.OpCreate) {
 						if err := permissions.CreateAuthRelationships(ctx, "ipam-block-type", objID, relationships...); err != nil {
 							return nil, fmt.Errorf("relationship request failed with error: %w", err)
 						}
@@ -743,7 +774,6 @@ func IPBlockTypeHooks() []ent.Hook {
 					}
 
 					additionalSubjects = append(additionalSubjects, dbObj.OwnerID)
-
 					relationships = append(relationships, events.AuthRelationshipRelation{
 						Relation:  "owner",
 						SubjectID: dbObj.OwnerID,

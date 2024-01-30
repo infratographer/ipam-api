@@ -54,7 +54,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK"),
-				// pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.String("node_id").
 			GoType(gidx.PrefixedID("")).
@@ -65,7 +65,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("NODE"),
-				// pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.String("node_owner_id").
 			GoType(gidx.PrefixedID("")).
@@ -76,7 +76,7 @@ func (IPAddress) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("OWNER"),
-				// pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.Bool("reserved").
 			Default(true).
