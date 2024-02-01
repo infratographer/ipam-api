@@ -171,5 +171,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.10 // indirect
 )
-
-replace go.infratographer.com/x => github.com/rizzza/x v0.0.0-20240123164547-34778d83c36b
