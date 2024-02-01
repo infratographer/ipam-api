@@ -172,4 +172,4 @@ require (
 	nhooyr.io/websocket v1.8.10 // indirect
 )
 
-replace go.infratographer.com/x => github.com/rizzza/x v0.0.0-20240123164547-34778d83c36b
+replace go.infratographer.com/x => github.com/rizzza/x v0.0.0-20240122202348-a5142b682ef6
