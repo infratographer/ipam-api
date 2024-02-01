@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"go.infratographer.com/ipam-api/internal/ent/schema/validator"
-	"go.infratographer.com/ipam-api/x/pubsubinfo"
 
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
@@ -55,7 +54,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("BLOCK_TYPE"),
-				pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubject("owner"),
 			),
 		field.String("location_id").
 			GoType(gidx.PrefixedID("")).
@@ -66,7 +65,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("LOCATION"),
-				pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.String("parent_block_id").
 			GoType(gidx.PrefixedID("")).
@@ -77,7 +76,7 @@ func (IPBlock) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("PARENT_BLOCK"),
-				pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubjectField(),
 			),
 		field.Bool("allow_auto_subnet").
 			Default(true).
@@ -122,7 +121,6 @@ func (IPBlock) Indexes() []ent.Index {
 // Annotations of the IPBlock
 func (IPBlock) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip block node on the graph."),
 		prefixIDDirective(IPBlockPrefix),
@@ -131,5 +129,6 @@ func (IPBlock) Annotations() []schema.Annotation {
 			entgql.MutationCreate().Description("Create a new ip block type node."),
 			entgql.MutationUpdate().Description("Update an existing ip block type node."),
 		),
+		entx.EventsHookSubjectName("ipam-block"),
 	}
 }

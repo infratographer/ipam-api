@@ -45,7 +45,7 @@ func (i *IPBlockBuilder) MustNew(ctx context.Context) *ent.IPBlock {
 	ipbCreate := EntClient.IPBlock.Create()
 
 	if i.Prefix == "" {
-		i.Prefix = gofakeit.IPv4Address()
+		i.Prefix = gofakeit.IPv4Address() + "/25"
 	}
 
 	ipbCreate.SetPrefix(i.Prefix)

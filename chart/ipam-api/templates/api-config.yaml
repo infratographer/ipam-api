@@ -5,15 +5,33 @@ metadata:
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
 data:
-  IPAMAPI_EVENTS_PUBLISHER_PREFIX: "{{ .Values.api.events.topicPrefix }}"
-  IPAMAPI_EVENTS_PUBLISHER_URL: "{{ .Values.api.events.connectionURL }}"
+  IPAMAPI_EVENTS_NATS_URL: "{{ .Values.api.events.nats.url }}"
+  IPAMAPI_EVENTS_NATS_PUBLISHPREFIX: "{{ .Values.api.events.nats.publishPrefix }}"
+  IPAMAPI_EVENTS_NATS_QUEUEGROUP: "{{ .Values.api.events.nats.queueGroup }}"
+  IPAMAPI_EVENTS_NATS_SOURCE: "{{ .Values.api.events.nats.source }}"
+  IPAMAPI_EVENTS_NATS_CONNECTTIMEOUT: "{{ .Values.api.events.nats.connectTimeout }}"
+  IPAMAPI_EVENTS_NATS_SHUTDOWNTIMEOUT: "{{ .Values.api.events.nats.shutdownTimeout }}"
+{{- if .Values.api.events.nats.credsSecretName }}
+  IPAMAPI_EVENTS_NATS_CREDSFILE: "{{ .Values.api.events.nats.credsFile }}"
+{{- end }}
   IPAMAPI_OIDC_ENABLED: "{{ .Values.api.oidc.enabled }}"
   IPAMAPI_OIDC_AUDIENCE: "{{ .Values.api.oidc.audience }}"
   IPAMAPI_OIDC_ISSUER: "{{ .Values.api.oidc.issuer }}"
   IPAMAPI_OIDC_JWKS_REMOTE_TIMEOUT: "{{ .Values.api.oidc.jwksRemoteTimeout }}"
+  IPAMAPI_PERMISSIONS_IGNORENORESPONDERS: "{{ .Values.api.permissions.ignoreNoResponders }}"
   IPAMAPI_PERMISSIONS_URL: "{{ .Values.api.permissions.url }}"
   IPAMAPI_SERVER_LISTEN: ":{{ .Values.api.listenPort }}"
   IPAMAPI_SERVER_SHUTDOWN_GRACE_PERIOD: "{{ .Values.api.shutdownGracePeriod }}"
+{{- if .Values.api.tracing.enabled }}
+  IPAMAPI_TRACING_ENABLED: "{{ .Values.api.tracing.enabled }}"
+  IPAMAPI_TRACING_PROVIDER: "{{ .Values.api.tracing.provider }}"
+  IPAMAPI_TRACING_ENVIRONMENT: "{{ .Values.api.tracing.environment }}"
+{{- if eq .Values.api.tracing.provider "otlpgrpc" }}
+  IPAMAPI_TRACING_OTLP_ENDPOINT: "{{ .Values.api.tracing.otlp.endpoint }}"
+  IPAMAPI_TRACING_OTLP_INSECURE: "{{ .Values.api.tracing.otlp.insecure }}"
+  IPAMAPI_TRACING_OTLP_CERTIFICATE: "{{ .Values.api.tracing.otlp.certificate }}"
+{{- end }}
+{{- end }}
 {{- with .Values.api.trustedProxies }}
   IPAMAPI_SERVER_TRUSTED_PROXIES: "{{ join " " . }}"
 {{- end }}

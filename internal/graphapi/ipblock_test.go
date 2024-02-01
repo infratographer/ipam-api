@@ -72,7 +72,7 @@ func Test_IPBlock_Lifecycle(t *testing.T) {
 
 	t.Run("Create Update Delete", func(t *testing.T) {
 		ipb, err := client.IPBlockCreate(ctx, testclient.CreateIPBlockInput{
-			Prefix:            gofakeit.IPv4Address(),
+			Prefix:            gofakeit.IPv4Address() + "/25",
 			LocationID:        gidx.MustNewID(locationPrefix),
 			IPBlockTypeID:     ipbt.ID,
 			ParentBlockID:     gidx.MustNewID(ipBlockTypePrefix),

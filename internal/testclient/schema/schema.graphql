@@ -598,7 +598,6 @@ input UpdateIPBlockTypeInput {
 	name: String
 }
 scalar _Any
-# a union of all types that use the @key directive
 union _Entity = IPAddress | IPAddressable | IPBlock | IPBlockType | ResourceOwner
 type _Service {
 	sdl: String

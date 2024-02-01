@@ -350,11 +350,15 @@ func (ibc *IPBlockCreate) createSpec() (*IPBlock, *sqlgraph.CreateSpec) {
 // IPBlockCreateBulk is the builder for creating many IPBlock entities in bulk.
 type IPBlockCreateBulk struct {
 	config
+	err      error
 	builders []*IPBlockCreate
 }
 
 // Save creates the IPBlock entities in the database.
 func (ibcb *IPBlockCreateBulk) Save(ctx context.Context) ([]*IPBlock, error) {
+	if ibcb.err != nil {
+		return nil, ibcb.err
+	}
 	specs := make([]*sqlgraph.CreateSpec, len(ibcb.builders))
 	nodes := make([]*IPBlock, len(ibcb.builders))
 	mutators := make([]Mutator, len(ibcb.builders))

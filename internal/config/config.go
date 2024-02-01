@@ -13,16 +13,11 @@ import (
 
 // AppConfig stores all the config values for our application
 var AppConfig struct {
-	Events      EventsConfig
+	Events      events.Config
 	OIDC        echojwtx.AuthConfig
 	CRDB        crdbx.Config
 	Logging     loggingx.Config
 	Permissions permissions.Config
 	Server      echox.Config
 	Tracing     otelx.Config
-}
-
-// EventsConfig stores the configuration for an event publisher
-type EventsConfig struct {
-	Publisher events.PublisherConfig
 }

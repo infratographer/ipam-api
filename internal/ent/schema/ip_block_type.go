@@ -8,8 +8,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"go.infratographer.com/ipam-api/x/pubsubinfo"
-
 	"go.infratographer.com/x/entx"
 	"go.infratographer.com/x/gidx"
 )
@@ -53,7 +51,7 @@ func (IPBlockType) Fields() []ent.Field {
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entgql.OrderField("OWNER"),
-				pubsubinfo.AdditionalSubject(),
+				entx.EventsHookAdditionalSubject("owner"),
 			),
 	}
 }
@@ -80,7 +78,6 @@ func (IPBlockType) Indexes() []ent.Index {
 // Annotations of the IPBlockType
 func (IPBlockType) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		pubsubinfo.Annotation{},
 		entx.GraphKeyDirective("id"),
 		schema.Comment("Represents an ip block type node on the graph."),
 		prefixIDDirective(IPBlockTypePrefix),
@@ -89,5 +86,6 @@ func (IPBlockType) Annotations() []schema.Annotation {
 			entgql.MutationCreate().Description("Create a new ip block type node."),
 			entgql.MutationUpdate().Description("Update an existing ip block type node."),
 		),
+		entx.EventsHookSubjectName("ipam-block-type"),
 	}
 }
