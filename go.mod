@@ -19,7 +19,7 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.26.0
-	github.com/vektah/gqlparser/v2 v2.5.10
+	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/wundergraph/graphql-go-tools v1.67.0
 	go.infratographer.com/permissions-api v0.2.7
 	go.infratographer.com/x v0.3.10-0.20240129185339-bec1b00bf570
