@@ -76,7 +76,7 @@ mutation{
     }
   )
   {
-    ip_block_type{
+    ipBlockType{
       name,
       id
     }
@@ -89,7 +89,7 @@ Output:
 {
   "data": {
     "createIPBlockType": {
-      "ip_block_type": {
+      "ipBlockType": {
         "name": "super-sweet-ip-block-type",
         "id": "ipamibt-9xaBQDAFmLOdceu9zO6Rj"
       }
@@ -103,7 +103,7 @@ Output:
 Input:
 ```graphql
 query{
-  ip_block_type(id:"ipamibt-9xaBQDAFmLOdceu9zO6Rj"){
+  ipBlockType(id:"ipamibt-9xaBQDAFmLOdceu9zO6Rj"){
     name,
     id
   }
@@ -114,7 +114,7 @@ Output:
 ```json
 {
   "data": {
-    "ip_block_type": {
+    "ipBlockType": {
       "name": "super-sweet-ip-block-type",
       "id": "ipamibt-9xaBQDAFmLOdceu9zO6Rj"
     }
