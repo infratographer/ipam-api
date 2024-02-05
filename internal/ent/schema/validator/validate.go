@@ -1,10 +1,11 @@
 package validator
 
 import (
-	"errors"
-	"fmt"
 	"net"
+
 	"net/netip"
+
+	"github.com/3th1nk/cidr"
 )
 
 // IPAddr returns error if IP address is NOT valid
@@ -14,14 +15,6 @@ func IPAddr(ip string) error {
 	}
 
 	return InvalidIPAddrError(ip)
-}
-
-// ErrInvalidIPAddr is an error raised when provided IP Address is invalid
-var ErrInvalidIPAddr = errors.New("provided IP Address is invalid")
-
-// InvalidIPAddrError returns Error Invalid IP Address
-func InvalidIPAddrError(ip string) error {
-	return fmt.Errorf("error %w: %s", ErrInvalidIPAddr, ip)
 }
 
 // IPBlockPref returns error if IP Block Prefix is NOT valid
@@ -34,10 +27,22 @@ func IPBlockPref(prefix string) error {
 	return nil
 }
 
-// ErrInvalidIPPref is an error raised when provided IP Block Prefix is invalid
-var ErrInvalidIPPref = errors.New("provided IP Block Prefix is invalid")
+// PartOfBlock returns error if IP address is NOT part of the block given block's prefix
+func PartOfBlock(ipBlockPref string, ipAdrr string) error {
+	c, _ := cidr.Parse(ipBlockPref)
+	belongsToBlock := false
 
-// InvalidIPPrefError returns Error Invalid IP Block Prefix
-func InvalidIPPrefError(prefix string) error {
-	return fmt.Errorf("error %w: %s", ErrInvalidIPPref, prefix)
+	c.Each(func(ip string) bool {
+		if ip == ipAdrr {
+			belongsToBlock = true
+		}
+
+		return true
+	})
+
+	if belongsToBlock {
+		return nil
+	}
+
+	return IPAddrOutsideBlockError(ipBlockPref, ipAdrr)
 }
