@@ -236,6 +236,33 @@ func TestGetIPAddressesByNodeID(t *testing.T) {
 	})
 }
 
+func TestGetIPAddressByNode(t *testing.T) {
+	cli := Client{
+		gqlCli: mustNewGQLTestClient(
+			`{
+	  "data": {
+		"ipAddressByNode": {
+		  "id": "ipamipa-12345",
+		  "ip": "192.168.10.1",
+		  "reserved": false
+		}
+	  }
+	}`),
+	}
+
+	ipResult, err := cli.GetIPAddressByNode(context.Background(), "nodeids-test")
+	require.NoError(t, err)
+	require.NotNil(t, ipResult)
+
+	assert.Equal(t, ipResult.IPAddress.ID, "ipamipa-12345")
+	assert.Equal(t, ipResult.IPAddress.IP, "192.168.10.1")
+	assert.False(t, ipResult.IPAddress.Reserved)
+
+	baddress, err := cli.GetIPAddressByNode(context.TODO(), "badprefix-test")
+	require.Error(t, err)
+	require.Nil(t, baddress)
+}
+
 func mustNewGQLTestClient(respJSON string) *graphql.Client {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/query", func(w http.ResponseWriter, req *http.Request) {

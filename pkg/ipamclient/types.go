@@ -109,3 +109,8 @@ type GetIPAddressesByNode struct {
 		} `graphql:"... on LoadBalancer"`
 	} `graphql:"node(id: $id)"`
 }
+
+// GetIPAddressByNode is the query used for getting an IP Address
+type GetIPAddressByNode struct {
+	IPAddress GetIPAddressResult `graphql:"ipAddressByNode(id: $id)"`
+}
