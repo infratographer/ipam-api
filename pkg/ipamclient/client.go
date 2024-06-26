@@ -205,7 +205,7 @@ func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) ([]IPAddress
 	return nodeIPs.NodeIPAddress.LoadBalancerFragment.IPAddresses, nil
 }
 
-// GetIPAddressByNode returns an IP Address from node id
+// GetIPAddressByNode returns an IP Address by node id
 func (c *Client) GetIPAddressByNode(ctx context.Context, nodeID string) (*GetIPAddressByNode, error) {
 	_, err := gidx.Parse(nodeID)
 	if err != nil {
