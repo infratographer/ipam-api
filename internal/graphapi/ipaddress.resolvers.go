@@ -83,6 +83,15 @@ func (r *queryResolver) IPAddress(ctx context.Context, id gidx.PrefixedID) (*gen
 	return r.client.IPAddress.Get(ctx, id)
 }
 
+// IPAddressByNode is the resolver for the ipAddressByNode field.
+func (r *queryResolver) IPAddressByNode(ctx context.Context, id gidx.PrefixedID) (*generated.IPAddress, error) {
+	if err := permissions.CheckAccess(ctx, id, actionIPBlockGet); err != nil {
+		return nil, err
+	}
+
+	return r.client.IPAddress.Query().Where(ipaddress.NodeID(id)).First(ctx)
+}
+
 // IPAddressable returns IPAddressableResolver implementation.
 func (r *Resolver) IPAddressable() IPAddressableResolver { return &iPAddressableResolver{r} }
 

@@ -8,6 +8,15 @@ extend type Query {
         """
         id: ID!
     ): IPAddress!
+    """
+    Look up ip address by Node ID
+    """
+    ipAddressByNode(
+        """
+        ID of the Node
+        """
+        id: ID!
+    ): IPAddress!
 }
 
 extend type Mutation{

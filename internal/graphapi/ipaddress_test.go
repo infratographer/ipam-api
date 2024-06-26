@@ -69,11 +69,12 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 
 	ipbt := (&IPBlockTypeBuilder{}).MustNew(ctx)
 	ipb := (&IPBlockBuilder{IPBlockTypeID: ipbt.ID}).MustNew(ctx)
+	node := gidx.MustNewID(nodePrefix)
 
 	t.Run("Create", func(t *testing.T) {
 		ipa, err := client.CreateIPAddress(ctx, testclient.CreateIPAddressInput{
 			IP:          gofakeit.IPv4Address(),
-			NodeID:      gidx.MustNewID(nodePrefix),
+			NodeID:      node,
 			NodeOwnerID: gidx.MustNewID(ownerPrefix),
 			Reserved:    newBool(true),
 			IPBlockID:   ipb.ID,
@@ -89,6 +90,12 @@ func Test_IPAddress_Lifecycle(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, ipaUpdate)
 		require.Equal(t, false, ipaUpdate.UpdateIPAddress.IPAddress.Reserved)
+
+		addr, err := client.GetIPAddressByNode(ctx, node)
+
+		require.NoError(t, err)
+		require.NotNil(t, addr)
+		require.Equal(t, addr.IPAddressByNode.ID, ipa.CreateIPAddress.IPAddress.ID)
 
 		ipaDelete, err := client.DeleteIPAddress(ctx, ipa.CreateIPAddress.IPAddress.ID)
 

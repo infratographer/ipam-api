@@ -539,6 +539,11 @@ type Query {
 		"""ID of the ip address"""
 		id: ID!
 	): IPAddress!
+	"""Look up ip address by Node ID"""
+	ipAddressByNode(
+		"""ID of the Node"""
+		id: ID!
+	): IPAddress!
 	"""Look up ip block by ID"""
 	ipBlock(
 		"""ID of the ip block"""

@@ -204,3 +204,22 @@ func (c *Client) GetIPAddresses(ctx context.Context, nodeID string) ([]IPAddress
 
 	return nodeIPs.NodeIPAddress.LoadBalancerFragment.IPAddresses, nil
 }
+
+// GetIPAddressByNode returns an IP Address by node id
+func (c *Client) GetIPAddressByNode(ctx context.Context, nodeID string) (*GetIPAddressByNode, error) {
+	_, err := gidx.Parse(nodeID)
+	if err != nil {
+		return nil, err
+	}
+
+	vars := map[string]interface{}{
+		"id": graphql.ID(nodeID),
+	}
+
+	var nodeIP GetIPAddressByNode
+	if err := c.gqlCli.Query(ctx, &nodeIP, vars); err != nil {
+		return nil, err
+	}
+
+	return &nodeIP, nil
+}

@@ -26,6 +26,7 @@ type TestClient interface {
 	ListIPBlockTypes(ctx context.Context, id gidx.PrefixedID, orderBy *IPBlockTypeOrder, httpRequestOptions ...client.HTTPRequestOption) (*ListIPBlockTypes, error)
 	UpdateIPAddress(ctx context.Context, id gidx.PrefixedID, input UpdateIPAddressInput, httpRequestOptions ...client.HTTPRequestOption) (*UpdateIPAddress, error)
 	GetIPAddress(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddress, error)
+	GetIPAddressByNode(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddressByNode, error)
 }
 
 type Client struct {
@@ -37,11 +38,12 @@ func NewClient(cli *http.Client, baseURL string, options ...client.HTTPRequestOp
 }
 
 type Query struct {
-	IPAddress   IPAddress   "json:\"ipAddress\" graphql:\"ipAddress\""
-	IPBlock     IPBlock     "json:\"ipBlock\" graphql:\"ipBlock\""
-	IPBlockType IPBlockType "json:\"ipBlockType\" graphql:\"ipBlockType\""
-	Entities    []Entity    "json:\"_entities\" graphql:\"_entities\""
-	Service     Service     "json:\"_service\" graphql:\"_service\""
+	IPAddress       IPAddress   "json:\"ipAddress\" graphql:\"ipAddress\""
+	IPAddressByNode IPAddress   "json:\"ipAddressByNode\" graphql:\"ipAddressByNode\""
+	IPBlock         IPBlock     "json:\"ipBlock\" graphql:\"ipBlock\""
+	IPBlockType     IPBlockType "json:\"ipBlockType\" graphql:\"ipBlockType\""
+	Entities        []Entity    "json:\"_entities\" graphql:\"_entities\""
+	Service         Service     "json:\"_service\" graphql:\"_service\""
 }
 type Mutation struct {
 	CreateIPAddress   IPAddressCreatePayload   "json:\"createIPAddress\" graphql:\"createIPAddress\""
@@ -238,6 +240,19 @@ type GetIPAddress struct {
 			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
 		} "json:\"ipBlock\" graphql:\"ipBlock\""
 	} "json:\"ipAddress\" graphql:\"ipAddress\""
+}
+type GetIPAddressByNode struct {
+	IPAddressByNode struct {
+		ID       gidx.PrefixedID "json:\"id\" graphql:\"id\""
+		IP       string          "json:\"ip\" graphql:\"ip\""
+		Reserved bool            "json:\"reserved\" graphql:\"reserved\""
+		IPBlock  struct {
+			ID                gidx.PrefixedID "json:\"id\" graphql:\"id\""
+			Prefix            string          "json:\"prefix\" graphql:\"prefix\""
+			AllowAutoAllocate bool            "json:\"allowAutoAllocate\" graphql:\"allowAutoAllocate\""
+			AllowAutoSubnet   bool            "json:\"allowAutoSubnet\" graphql:\"allowAutoSubnet\""
+		} "json:\"ipBlock\" graphql:\"ipBlock\""
+	} "json:\"ipAddressByNode\" graphql:\"ipAddressByNode\""
 }
 
 const CreateIPAddressDocument = `mutation CreateIPAddress ($input: CreateIPAddressInput!) {
@@ -637,6 +652,34 @@ func (c *Client) GetIPAddress(ctx context.Context, id gidx.PrefixedID, httpReque
 
 	var res GetIPAddress
 	if err := c.Client.Post(ctx, "getIPAddress", GetIPAddressDocument, &res, vars, httpRequestOptions...); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetIPAddressByNodeDocument = `query getIPAddressByNode ($id: ID!) {
+	ipAddressByNode(id: $id) {
+		id
+		ip
+		reserved
+		ipBlock {
+			id
+			prefix
+			allowAutoAllocate
+			allowAutoSubnet
+		}
+	}
+}
+`
+
+func (c *Client) GetIPAddressByNode(ctx context.Context, id gidx.PrefixedID, httpRequestOptions ...client.HTTPRequestOption) (*GetIPAddressByNode, error) {
+	vars := map[string]interface{}{
+		"id": id,
+	}
+
+	var res GetIPAddressByNode
+	if err := c.Client.Post(ctx, "getIPAddressByNode", GetIPAddressByNodeDocument, &res, vars, httpRequestOptions...); err != nil {
 		return nil, err
 	}
 
