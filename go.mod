@@ -7,7 +7,7 @@ require (
 	entgo.io/ent v0.12.4
 	github.com/3th1nk/cidr v0.2.0
 	github.com/99designs/gqlgen v0.17.38
-	github.com/Yamashou/gqlgenc v0.15.1
+	github.com/Yamashou/gqlgenc v0.25.3
 	github.com/brianvoe/gofakeit/v6 v6.26.3
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hasura/go-graphql-client v0.10.2
