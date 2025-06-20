@@ -1,6 +1,8 @@
 module go.infratographer.com/ipam-api
 
-go 1.21
+go 1.23.0
+
+toolchain go1.24.4
 
 require (
 	entgo.io/contrib v0.4.5
@@ -24,7 +26,7 @@ require (
 	go.infratographer.com/permissions-api v0.2.7
 	go.infratographer.com/x v0.3.10-0.20240129185339-bec1b00bf570
 	go.uber.org/zap v1.26.0
-	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
+	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b
 )
 
 require (
@@ -152,14 +154,15 @@ require (
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.step.sm/crypto v0.35.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.15.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.16.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20231212172506-995d672761c0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0 // indirect
