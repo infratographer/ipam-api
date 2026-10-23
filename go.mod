@@ -1,6 +1,6 @@
 module go.infratographer.com/ipam-api
 
-go 1.21
+go 1.24
 
 require (
 	entgo.io/contrib v0.4.5
@@ -89,7 +89,7 @@ require (
 	github.com/jackc/pgtype v1.14.0 // indirect
 	github.com/jackc/pgx/v4 v4.18.1 // indirect
 	github.com/jaevor/go-nanoid v1.3.0 // indirect
-	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/echo-contrib v0.15.0 // indirect
 	github.com/labstack/echo-jwt/v4 v4.2.0 // indirect
